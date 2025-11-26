@@ -771,13 +771,79 @@ class _BuyLocalSection extends StatelessWidget {
         const SizedBox(height: 14),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
-            _CircleIconBadge(iconPath: 'assets/images/cookie.svg'),
-            _CircleIconBadge(iconPath: 'assets/images/car.svg'),
-            _CircleIconBadge(iconPath: 'assets/images/airplane.svg'),
-            _CircleIconBadge(iconPath: 'assets/images/gift.svg'),
-            _CircleIconBadge(iconPath: 'assets/images/store.svg'),
-            _CircleIconBadge(iconPath: 'assets/images/heart.svg'),
+          children: [
+            _CircleIconBadge(
+              iconPath: 'assets/images/cookie.svg',
+              category: 'Food & Dining',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CashbackMerchantScreen(initialCategory: 'Food & Dining'),
+                  ),
+                );
+              },
+            ),
+            _CircleIconBadge(
+              iconPath: 'assets/images/car.svg',
+              category: 'Automotive',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CashbackMerchantScreen(initialCategory: 'Automotive'),
+                  ),
+                );
+              },
+            ),
+            _CircleIconBadge(
+              iconPath: 'assets/images/airplane.svg',
+              category: 'Entertainment',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CashbackMerchantScreen(initialCategory: 'Entertainment'),
+                  ),
+                );
+              },
+            ),
+            _CircleIconBadge(
+              iconPath: 'assets/images/gift.svg',
+              category: 'Retail',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CashbackMerchantScreen(initialCategory: 'Retail'),
+                  ),
+                );
+              },
+            ),
+            _CircleIconBadge(
+              iconPath: 'assets/images/store.svg',
+              category: 'Retail',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CashbackMerchantScreen(initialCategory: 'Retail'),
+                  ),
+                );
+              },
+            ),
+            _CircleIconBadge(
+              iconPath: 'assets/images/heart.svg',
+              category: 'Beauty & Barber',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CashbackMerchantScreen(initialCategory: 'Beauty & Barber'),
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ],
@@ -787,27 +853,36 @@ class _BuyLocalSection extends StatelessWidget {
 
 class _CircleIconBadge extends StatelessWidget {
   final String iconPath;
+  final String? category;
+  final VoidCallback? onTap;
 
-  const _CircleIconBadge({required this.iconPath});
+  const _CircleIconBadge({
+    required this.iconPath,
+    this.category,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     const badgeBg = Color(0xFFF6F8C7);
     const primaryText = Color(0xFF151712);
 
-    return Container(
-      width: 46,
-      height: 46,
-      decoration: const BoxDecoration(
-        color: badgeBg,
-        shape: BoxShape.circle,
-      ),
-      child: Center(
-        child: SvgPicture.asset(
-          iconPath,
-          width: 22,
-          height: 22,
-          colorFilter: const ColorFilter.mode(primaryText, BlendMode.srcIn),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 46,
+        height: 46,
+        decoration: const BoxDecoration(
+          color: badgeBg,
+          shape: BoxShape.circle,
+        ),
+        child: Center(
+          child: SvgPicture.asset(
+            iconPath,
+            width: 22,
+            height: 22,
+            colorFilter: const ColorFilter.mode(primaryText, BlendMode.srcIn),
+          ),
         ),
       ),
     );
@@ -1130,7 +1205,9 @@ class _BottomNavItem extends StatelessWidget {
 // ═══════════════════════════════════════════════════════════════════════
 
 class CashbackMerchantScreen extends StatefulWidget {
-  const CashbackMerchantScreen({super.key});
+  final String? initialCategory;
+
+  const CashbackMerchantScreen({super.key, this.initialCategory});
 
   @override
   State<CashbackMerchantScreen> createState() => _CashbackMerchantScreenState();
@@ -1140,6 +1217,13 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
   bool _isMapView = false;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  String? _selectedCategory;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedCategory = widget.initialCategory;
+  }
 
   @override
   void dispose() {
@@ -1148,14 +1232,26 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
   }
 
   List<MerchantData> get filteredMerchants {
-    if (_searchQuery.isEmpty) {
-      return merchantsData;
+    var filtered = merchantsData;
+
+    // Filter by category
+    if (_selectedCategory != null && _selectedCategory!.isNotEmpty) {
+      filtered = filtered.where((merchant) {
+        final category = _getMccCategory(merchant.mcc);
+        return category == _selectedCategory;
+      }).toList();
     }
-    return merchantsData.where((merchant) {
-      return merchant.merchantName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-             merchant.city.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-             merchant.streetAddress.toLowerCase().contains(_searchQuery.toLowerCase());
-    }).toList();
+
+    // Filter by search query
+    if (_searchQuery.isNotEmpty) {
+      filtered = filtered.where((merchant) {
+        return merchant.merchantName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+               merchant.city.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+               merchant.streetAddress.toLowerCase().contains(_searchQuery.toLowerCase());
+      }).toList();
+    }
+
+    return filtered;
   }
 
   @override
@@ -1346,48 +1442,7 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                         ],
                       ),
                     ),
-                    // Categories section
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text(
-                            'Categories',
-                            style: TextStyle(
-                              color: Color(0xFF151712),
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            'View all',
-                            style: TextStyle(
-                              color: Color(0xFF8F928C),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Category icons
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          _CategoryIcon(iconPath: 'assets/images/cookie.svg'),
-                          _CategoryIcon(iconPath: 'assets/images/car.svg'),
-                          _CategoryIcon(iconPath: 'assets/images/airplane.svg'),
-                          _CategoryIcon(iconPath: 'assets/images/gift.svg'),
-                          _CategoryIcon(iconPath: 'assets/images/store.svg'),
-                          _CategoryIcon(iconPath: 'assets/images/heart.svg'),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
                     // Places near you section
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -1516,6 +1571,76 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                               ),
                           ],
                         ),
+                      ),
+                    ),
+                    // Category filter chips
+                    const SizedBox(height: 12),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _CategoryIconFilter(
+                            iconPath: 'assets/images/cookie.svg',
+                            category: 'Food & Dining',
+                            selected: _selectedCategory == 'Food & Dining',
+                            onTap: () {
+                              setState(() {
+                                _selectedCategory = _selectedCategory == 'Food & Dining' ? null : 'Food & Dining';
+                              });
+                            },
+                          ),
+                          _CategoryIconFilter(
+                            iconPath: 'assets/images/car.svg',
+                            category: 'Automotive',
+                            selected: _selectedCategory == 'Automotive',
+                            onTap: () {
+                              setState(() {
+                                _selectedCategory = _selectedCategory == 'Automotive' ? null : 'Automotive';
+                              });
+                            },
+                          ),
+                          _CategoryIconFilter(
+                            iconPath: 'assets/images/airplane.svg',
+                            category: 'Entertainment',
+                            selected: _selectedCategory == 'Entertainment',
+                            onTap: () {
+                              setState(() {
+                                _selectedCategory = _selectedCategory == 'Entertainment' ? null : 'Entertainment';
+                              });
+                            },
+                          ),
+                          _CategoryIconFilter(
+                            iconPath: 'assets/images/gift.svg',
+                            category: 'Retail',
+                            selected: _selectedCategory == 'Retail',
+                            onTap: () {
+                              setState(() {
+                                _selectedCategory = _selectedCategory == 'Retail' ? null : 'Retail';
+                              });
+                            },
+                          ),
+                          _CategoryIconFilter(
+                            iconPath: 'assets/images/store.svg',
+                            category: 'Retail',
+                            selected: _selectedCategory == 'Retail',
+                            onTap: () {
+                              setState(() {
+                                _selectedCategory = _selectedCategory == 'Retail' ? null : 'Retail';
+                              });
+                            },
+                          ),
+                          _CategoryIconFilter(
+                            iconPath: 'assets/images/heart.svg',
+                            category: 'Beauty & Barber',
+                            selected: _selectedCategory == 'Beauty & Barber',
+                            onTap: () {
+                              setState(() {
+                                _selectedCategory = _selectedCategory == 'Beauty & Barber' ? null : 'Beauty & Barber';
+                              });
+                            },
+                          ),
+                        ],
                       ),
                     ),
                     // Map view (only shown when map view is selected)
@@ -1701,26 +1826,41 @@ String _getMccCategory(String mcc) {
   }
 }
 
-class _CategoryIcon extends StatelessWidget {
-  final String iconPath;
 
-  const _CategoryIcon({required this.iconPath});
+class _CategoryIconFilter extends StatelessWidget {
+  final String iconPath;
+  final String category;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _CategoryIconFilter({
+    required this.iconPath,
+    required this.category,
+    required this.selected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: const BoxDecoration(
-        color: Color(0xFFF6F8C7),
-        shape: BoxShape.circle,
-      ),
-      child: Center(
-        child: SvgPicture.asset(
-          iconPath,
-          width: 24,
-          height: 24,
-          colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 46,
+        height: 46,
+        decoration: BoxDecoration(
+          color: selected ? const Color(0xFF6C7200) : const Color(0xFFF6F8C7),
+          shape: BoxShape.circle,
+        ),
+        child: Center(
+          child: SvgPicture.asset(
+            iconPath,
+            width: 22,
+            height: 22,
+            colorFilter: ColorFilter.mode(
+              selected ? Colors.white : const Color(0xFF151712),
+              BlendMode.srcIn,
+            ),
+          ),
         ),
       ),
     );
