@@ -987,6 +987,25 @@ class CashbackMerchantScreen extends StatefulWidget {
 
 class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
   bool _isMapView = false;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<MerchantData> get filteredMerchants {
+    if (_searchQuery.isEmpty) {
+      return merchantsData;
+    }
+    return merchantsData.where((merchant) {
+      return merchant.merchantName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+             merchant.city.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+             merchant.streetAddress.toLowerCase().contains(_searchQuery.toLowerCase());
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1293,7 +1312,7 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         decoration: BoxDecoration(
                           color: const Color(0xFFF3F4F6),
                           borderRadius: BorderRadius.circular(12),
@@ -1307,13 +1326,43 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                               colorFilter: const ColorFilter.mode(Color(0xFF9CA3AF), BlendMode.srcIn),
                             ),
                             const SizedBox(width: 12),
-                            const Text(
-                              'Search places',
-                              style: TextStyle(
-                                color: Color(0xFF9CA3AF),
-                                fontSize: 15,
+                            Expanded(
+                              child: TextField(
+                                controller: _searchController,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _searchQuery = value;
+                                  });
+                                },
+                                style: const TextStyle(
+                                  color: Color(0xFF151712),
+                                  fontSize: 15,
+                                ),
+                                decoration: const InputDecoration(
+                                  hintText: 'Search places',
+                                  hintStyle: TextStyle(
+                                    color: Color(0xFF9CA3AF),
+                                    fontSize: 15,
+                                  ),
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.symmetric(vertical: 12),
+                                ),
                               ),
                             ),
+                            if (_searchQuery.isNotEmpty)
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _searchController.clear();
+                                    _searchQuery = '';
+                                  });
+                                },
+                                child: const Icon(
+                                  Icons.clear,
+                                  size: 20,
+                                  color: Color(0xFF9CA3AF),
+                                ),
+                              ),
                           ],
                         ),
                       ),
@@ -1352,7 +1401,7 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                                   },
                                 ),
                                 MarkerLayer(
-                                  markers: merchantsData.map((merchant) {
+                                  markers: filteredMerchants.map((merchant) {
                                     return Marker(
                                       point: merchant.location,
                                       width: 36,
@@ -1430,12 +1479,45 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                       ),
                     ],
                     const SizedBox(height: 24),
-                    // Merchant list - using real data
-                    ...merchantsData.map((merchant) => _PlaceListItem(
-                      category: _getMccCategory(merchant.mcc),
-                      name: merchant.merchantName,
-                      address: '${merchant.streetAddress} ${merchant.city} ${merchant.zipCode}',
-                    )).toList(),
+                    // Merchant list - using filtered data
+                    if (filteredMerchants.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.all(32),
+                        child: Center(
+                          child: Column(
+                            children: const [
+                              Icon(
+                                Icons.search_off,
+                                size: 48,
+                                color: Color(0xFF9CA3AF),
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                'No merchants found',
+                                style: TextStyle(
+                                  color: Color(0xFF8F928C),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                'Try adjusting your search',
+                                style: TextStyle(
+                                  color: Color(0xFF9CA3AF),
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    else
+                      ...filteredMerchants.map((merchant) => _PlaceListItem(
+                        category: _getMccCategory(merchant.mcc),
+                        name: merchant.merchantName,
+                        address: '${merchant.streetAddress} ${merchant.city} ${merchant.zipCode}',
+                      )).toList(),
                     const SizedBox(height: 100),
                   ],
                 ),
