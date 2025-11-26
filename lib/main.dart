@@ -256,11 +256,11 @@ class BusinessAccountHome extends StatelessWidget {
             Column(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text(
+                    children: [
+                      const Text(
                         '9:41',
                         style: TextStyle(
                           fontSize: 15,
@@ -270,11 +270,16 @@ class BusinessAccountHome extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          Icon(Icons.signal_cellular_4_bar, size: 16, color: Color(0xFF151712)),
-                          SizedBox(width: 4),
-                          Icon(Icons.wifi, size: 16, color: Color(0xFF151712)),
-                          SizedBox(width: 4),
-                          Icon(Icons.battery_full, size: 20, color: Color(0xFF151712)),
+                          const Icon(Icons.signal_cellular_4_bar, size: 16, color: Color(0xFF151712)),
+                          const SizedBox(width: 4),
+                          SvgPicture.asset(
+                            'assets/images/wifi.svg',
+                            width: 16,
+                            height: 16,
+                            colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
+                          ),
+                          const SizedBox(width: 4),
+                          const Icon(Icons.battery_full, size: 20, color: Color(0xFF151712)),
                         ],
                       ),
                     ],
@@ -1024,12 +1029,12 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
           children: [
             // Status bar
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               color: Colors.white,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     '9:41',
                     style: TextStyle(
                       fontSize: 15,
@@ -1039,11 +1044,16 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                   ),
                   Row(
                     children: [
-                      Icon(Icons.signal_cellular_4_bar, size: 16, color: Color(0xFF151712)),
-                      SizedBox(width: 4),
-                      Icon(Icons.wifi, size: 16, color: Color(0xFF151712)),
-                      SizedBox(width: 4),
-                      Icon(Icons.battery_full, size: 20, color: Color(0xFF151712)),
+                      const Icon(Icons.signal_cellular_4_bar, size: 16, color: Color(0xFF151712)),
+                      const SizedBox(width: 4),
+                      SvgPicture.asset(
+                        'assets/images/wifi.svg',
+                        width: 16,
+                        height: 16,
+                        colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(Icons.battery_full, size: 20, color: Color(0xFF151712)),
                     ],
                   ),
                 ],
@@ -1357,8 +1367,8 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                             borderRadius: BorderRadius.circular(20),
                             child: FlutterMap(
                               options: MapOptions(
-                                initialCenter: LatLng(50.0, 10.0),
-                                initialZoom: 4.0,
+                                initialCenter: LatLng(48.0, 8.0),
+                                initialZoom: 5.0,
                                 minZoom: 3.0,
                                 maxZoom: 18.0,
                               ),
@@ -1366,14 +1376,9 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                                 TileLayer(
                                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                                   userAgentPackageName: 'com.teya.merchant_rewards',
-                                  tileBuilder: (context, widget, tile) {
-                                    return ColorFiltered(
-                                      colorFilter: const ColorFilter.mode(
-                                        Color(0xFFF7F8F2),
-                                        BlendMode.lighten,
-                                      ),
-                                      child: widget,
-                                    );
+                                  subdomains: const ['a', 'b', 'c'],
+                                  additionalOptions: const {
+                                    'attribution': '© OpenStreetMap contributors',
                                   },
                                 ),
                                 MarkerLayer(
@@ -1424,11 +1429,11 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                                     );
                                   }).toList(),
                                 ),
-                                // User location marker (center of map)
+                                // User location marker (center of Europe)
                                 MarkerLayer(
                                   markers: [
                                     Marker(
-                                      point: LatLng(50.0, 10.0),
+                                      point: LatLng(48.0, 8.0),
                                       width: 20,
                                       height: 20,
                                       child: Container(
@@ -1438,7 +1443,7 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                                           border: Border.all(color: Colors.white, width: 3),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Colors.black.withOpacity(0.2),
+                                              color: Colors.black.withOpacity(0.3),
                                               blurRadius: 8,
                                               offset: const Offset(0, 2),
                                             ),
