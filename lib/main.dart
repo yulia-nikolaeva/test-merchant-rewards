@@ -738,16 +738,42 @@ class _BuyLocalSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Expanded(
-              child: Text(
-                'Buy local',
-                style: TextStyle(
-                  color: primaryText,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
+            const Text(
+              'Buy local',
+              style: TextStyle(
+                color: primaryText,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
               ),
             ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE1E456),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.monetization_on,
+                    size: 14,
+                    color: primaryText,
+                  ),
+                  const SizedBox(width: 4),
+                  const Text(
+                    'Earn cashback',
+                    style: TextStyle(
+                      color: primaryText,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Spacer(),
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -773,73 +799,61 @@ class _BuyLocalSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _CircleIconBadge(
-              iconPath: 'assets/images/cookie.svg',
-              category: 'Food & Dining',
+              iconPath: 'assets/images/shopping-cart.svg',
+              category: 'Retail',
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const CashbackMerchantScreen(initialCategory: 'Food & Dining'),
+                    builder: (context) => const CashbackMerchantScreen(initialCategory: 'Retail'),
                   ),
                 );
               },
             ),
             _CircleIconBadge(
-              iconPath: 'assets/images/car.svg',
-              category: 'Automotive',
+              iconPath: 'assets/images/coffee-cup.svg',
+              category: 'Cafe',
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const CashbackMerchantScreen(initialCategory: 'Automotive'),
-                  ),
-                );
-              },
-            ),
-            _CircleIconBadge(
-              iconPath: 'assets/images/airplane.svg',
-              category: 'Entertainment',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CashbackMerchantScreen(initialCategory: 'Entertainment'),
+                    builder: (context) => const CashbackMerchantScreen(initialCategory: 'Cafe'),
                   ),
                 );
               },
             ),
             _CircleIconBadge(
               iconPath: 'assets/images/gift.svg',
-              category: 'Retail',
+              category: 'Gifts',
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const CashbackMerchantScreen(initialCategory: 'Retail'),
+                    builder: (context) => const CashbackMerchantScreen(initialCategory: 'Gifts'),
                   ),
                 );
               },
             ),
             _CircleIconBadge(
-              iconPath: 'assets/images/store.svg',
-              category: 'Retail',
+              iconPath: 'assets/images/plant.svg',
+              category: 'Services',
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const CashbackMerchantScreen(initialCategory: 'Retail'),
+                    builder: (context) => const CashbackMerchantScreen(initialCategory: 'Services'),
                   ),
                 );
               },
             ),
             _CircleIconBadge(
-              iconPath: 'assets/images/heart.svg',
-              category: 'Beauty & Barber',
+              iconPath: 'assets/images/utensils.svg',
+              category: 'Restaurant',
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const CashbackMerchantScreen(initialCategory: 'Beauty & Barber'),
+                    builder: (context) => const CashbackMerchantScreen(initialCategory: 'Restaurant'),
                   ),
                 );
               },
@@ -1573,7 +1587,39 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                         ),
                       ),
                     ),
-                    // Category filter chips
+                    // Category filter section with title
+                    const SizedBox(height: 24),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Categories',
+                            style: TextStyle(
+                              color: Color(0xFF151712),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedCategory = null;
+                              });
+                            },
+                            child: const Text(
+                              'View all',
+                              style: TextStyle(
+                                color: Color(0xFF8F928C),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -1581,62 +1627,52 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           _CategoryIconFilter(
-                            iconPath: 'assets/images/cookie.svg',
-                            category: 'Food & Dining',
-                            selected: _selectedCategory == 'Food & Dining',
+                            iconPath: 'assets/images/shopping-cart.svg',
+                            category: 'Retail',
+                            selected: _selectedCategory == 'Retail',
                             onTap: () {
                               setState(() {
-                                _selectedCategory = _selectedCategory == 'Food & Dining' ? null : 'Food & Dining';
+                                _selectedCategory = _selectedCategory == 'Retail' ? null : 'Retail';
                               });
                             },
                           ),
                           _CategoryIconFilter(
-                            iconPath: 'assets/images/car.svg',
-                            category: 'Automotive',
-                            selected: _selectedCategory == 'Automotive',
+                            iconPath: 'assets/images/coffee-cup.svg',
+                            category: 'Cafe',
+                            selected: _selectedCategory == 'Cafe',
                             onTap: () {
                               setState(() {
-                                _selectedCategory = _selectedCategory == 'Automotive' ? null : 'Automotive';
-                              });
-                            },
-                          ),
-                          _CategoryIconFilter(
-                            iconPath: 'assets/images/airplane.svg',
-                            category: 'Entertainment',
-                            selected: _selectedCategory == 'Entertainment',
-                            onTap: () {
-                              setState(() {
-                                _selectedCategory = _selectedCategory == 'Entertainment' ? null : 'Entertainment';
+                                _selectedCategory = _selectedCategory == 'Cafe' ? null : 'Cafe';
                               });
                             },
                           ),
                           _CategoryIconFilter(
                             iconPath: 'assets/images/gift.svg',
-                            category: 'Retail',
-                            selected: _selectedCategory == 'Retail',
+                            category: 'Gifts',
+                            selected: _selectedCategory == 'Gifts',
                             onTap: () {
                               setState(() {
-                                _selectedCategory = _selectedCategory == 'Retail' ? null : 'Retail';
+                                _selectedCategory = _selectedCategory == 'Gifts' ? null : 'Gifts';
                               });
                             },
                           ),
                           _CategoryIconFilter(
-                            iconPath: 'assets/images/store.svg',
-                            category: 'Retail',
-                            selected: _selectedCategory == 'Retail',
+                            iconPath: 'assets/images/plant.svg',
+                            category: 'Services',
+                            selected: _selectedCategory == 'Services',
                             onTap: () {
                               setState(() {
-                                _selectedCategory = _selectedCategory == 'Retail' ? null : 'Retail';
+                                _selectedCategory = _selectedCategory == 'Services' ? null : 'Services';
                               });
                             },
                           ),
                           _CategoryIconFilter(
-                            iconPath: 'assets/images/heart.svg',
-                            category: 'Beauty & Barber',
-                            selected: _selectedCategory == 'Beauty & Barber',
+                            iconPath: 'assets/images/utensils.svg',
+                            category: 'Restaurant',
+                            selected: _selectedCategory == 'Restaurant',
                             onTap: () {
                               setState(() {
-                                _selectedCategory = _selectedCategory == 'Beauty & Barber' ? null : 'Beauty & Barber';
+                                _selectedCategory = _selectedCategory == 'Restaurant' ? null : 'Restaurant';
                               });
                             },
                           ),
@@ -1808,21 +1844,27 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
 
 // Helper function to get category from MCC code
 String _getMccCategory(String mcc) {
+  // Assign categories based on merchant ID for variety across the 5 categories
+  final merchantId = int.tryParse(mcc) ?? 0;
+  final categories = ['Retail', 'Cafe', 'Gifts', 'Services', 'Restaurant'];
+
+  // Use a simple hash-like distribution based on MCC
   switch (mcc) {
-    case '5812':
-    case '5813':
-    case '5814':
-      return 'Food & Dining';
-    case '7230':
-      return 'Beauty & Barber';
-    case '7523':
-      return 'Parking';
-    case '7538':
-      return 'Automotive';
-    case '7832':
-      return 'Entertainment';
+    case '5812': // Restaurants
+    case '5814': // Fast Food
+      return merchantId % 2 == 0 ? 'Restaurant' : 'Cafe';
+    case '5813': // Bars
+      return 'Cafe';
+    case '7230': // Beauty
+      return 'Services';
+    case '7523': // Parking
+    case '7538': // Auto service
+      return 'Services';
+    case '7832': // Entertainment
+      return 'Services';
     default:
-      return 'Retail';
+      // Distribute remaining between Retail and Gifts
+      return merchantId % 3 == 0 ? 'Gifts' : 'Retail';
   }
 }
 
