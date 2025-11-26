@@ -1,9 +1,141 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 void main() {
   runApp(const MyApp());
 }
+
+// ═══════════════════════════════════════════════════════════════════════
+//                    MERCHANT DATA MODEL
+// ═══════════════════════════════════════════════════════════════════════
+
+class MerchantData {
+  final int id;
+  final String mcc;
+  final String merchantName;
+  final String zipCode;
+  final String streetAddress;
+  final String city;
+  final String countryCode;
+  final LatLng location;
+
+  MerchantData({
+    required this.id,
+    required this.mcc,
+    required this.merchantName,
+    required this.zipCode,
+    required this.streetAddress,
+    required this.city,
+    required this.countryCode,
+    required this.location,
+  });
+}
+
+// Hardcoded merchant data from merchant-map repository
+final List<MerchantData> merchantsData = [
+  MerchantData(
+    id: 1,
+    mcc: "7832",
+    merchantName: "Centro de Lazer do Campo Pequeno",
+    zipCode: "1000-082",
+    streetAddress: "Campo Pequeno",
+    city: "Lisboa",
+    countryCode: "PT",
+    location: LatLng(38.7436, -9.1453),
+  ),
+  MerchantData(
+    id: 2,
+    mcc: "5813",
+    merchantName: "P-Va Pincszet",
+    zipCode: "2364",
+    streetAddress: "77P4+H3",
+    city: "Ocsa",
+    countryCode: "HU",
+    location: LatLng(47.2990, 19.2269),
+  ),
+  MerchantData(
+    id: 3,
+    mcc: "5812",
+    merchantName: "Palace Cafe Pavilon",
+    zipCode: "1013",
+    streetAddress: "Budai vr hrsz:6452/4",
+    city: "Budapest",
+    countryCode: "HU",
+    location: LatLng(47.4979, 19.0380),
+  ),
+  MerchantData(
+    id: 4,
+    mcc: "7538",
+    merchantName: "Pam's mot centre",
+    zipCode: "MK12 6JU",
+    streetAddress: "Pams M O T Centrer",
+    city: "Milton Keynes",
+    countryCode: "GB",
+    location: LatLng(52.0521, -0.7673),
+  ),
+  MerchantData(
+    id: 5,
+    mcc: "5814",
+    merchantName: "Pammies Snack Bar",
+    zipCode: "PE38 9PY",
+    streetAddress: "A134 Lorry Stop",
+    city: "Downham Market",
+    countryCode: "GB",
+    location: LatLng(52.6077, 0.3898),
+  ),
+  MerchantData(
+    id: 6,
+    mcc: "7230",
+    merchantName: "Par Barber Machine 2",
+    zipCode: "B3 1LL",
+    streetAddress: "Par Hair Club Brindley House",
+    city: "Birmingham",
+    countryCode: "GB",
+    location: LatLng(52.4796, -1.8995),
+  ),
+  MerchantData(
+    id: 7,
+    mcc: "7230",
+    merchantName: "Par Hair Club",
+    zipCode: "B3 1LL",
+    streetAddress: "Par Hair Club Brindley House",
+    city: "Birmingham",
+    countryCode: "GB",
+    location: LatLng(52.4796, -1.8995),
+  ),
+  MerchantData(
+    id: 8,
+    mcc: "5813",
+    merchantName: "Park Bar Deck",
+    zipCode: "2750-353",
+    streetAddress: "Calada do Combro, 58-74",
+    city: "Cascais",
+    countryCode: "PT",
+    location: LatLng(38.6979, -9.4189),
+  ),
+  MerchantData(
+    id: 9,
+    mcc: "7523",
+    merchantName: "ParkolMester",
+    zipCode: "4032",
+    streetAddress: "Klterlet/Kltelek 148/46 hrsz",
+    city: "Debrecen",
+    countryCode: "HU",
+    location: LatLng(47.5316, 21.6394),
+  ),
+  MerchantData(
+    id: 10,
+    mcc: "5812",
+    merchantName: "Parti Bf",
+    zipCode: "8272",
+    streetAddress: "klterlet 030/13 hrsz.",
+    city: "Obudavar",
+    countryCode: "HU",
+    location: LatLng(46.8547, 18.0522),
+  ),
+];
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -1215,7 +1347,6 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                           width: double.infinity,
                           height: 220,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFE5E7EB),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: const Color(0xFFD1D5DB),
@@ -1224,67 +1355,98 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(20),
-                            child: Stack(
+                            child: FlutterMap(
+                              options: MapOptions(
+                                initialCenter: LatLng(50.0, 10.0),
+                                initialZoom: 4.0,
+                                minZoom: 3.0,
+                                maxZoom: 18.0,
+                              ),
                               children: [
-                                // Subtle grid pattern
-                                ...List.generate(28, (index) {
-                                  return Positioned(
-                                    left: (index % 4) * 90.0 + 10,
-                                    top: (index ~/ 4) * 35.0 + 10,
-                                    child: Container(
-                                      width: 70,
-                                      height: 25,
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFD1D5DB).withOpacity(0.3),
-                                        borderRadius: BorderRadius.circular(4),
+                                TileLayer(
+                                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                  userAgentPackageName: 'com.teya.merchant_rewards',
+                                  tileBuilder: (context, widget, tile) {
+                                    return ColorFiltered(
+                                      colorFilter: const ColorFilter.mode(
+                                        Color(0xFFF7F8F2),
+                                        BlendMode.lighten,
+                                      ),
+                                      child: widget,
+                                    );
+                                  },
+                                ),
+                                MarkerLayer(
+                                  markers: merchantsData.map((merchant) {
+                                    return Marker(
+                                      point: merchant.location,
+                                      width: 36,
+                                      height: 36,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          // Show merchant info in a snackbar or dialog
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                '${merchant.merchantName}\n${merchant.city}, ${merchant.countryCode}',
+                                              ),
+                                              duration: const Duration(seconds: 2),
+                                              behavior: SnackBarBehavior.floating,
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFF6F8C7),
+                                            shape: BoxShape.circle,
+                                            border: Border.all(color: Colors.white, width: 2),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withOpacity(0.15),
+                                                blurRadius: 6,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Center(
+                                            child: SvgPicture.asset(
+                                              'assets/images/store.svg',
+                                              width: 18,
+                                              height: 18,
+                                              colorFilter: const ColorFilter.mode(
+                                                Color(0xFF151712),
+                                                BlendMode.srcIn,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                                // User location marker (center of map)
+                                MarkerLayer(
+                                  markers: [
+                                    Marker(
+                                      point: LatLng(50.0, 10.0),
+                                      width: 20,
+                                      height: 20,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF6C7200),
+                                          shape: BoxShape.circle,
+                                          border: Border.all(color: Colors.white, width: 3),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.2),
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  );
-                                }),
-                                // Map pins with yellow-green backgrounds
-                                Positioned(
-                                  left: 60,
-                                  top: 50,
-                                  child: _MapPinMarker(),
-                                ),
-                                Positioned(
-                                  left: 220,
-                                  top: 70,
-                                  child: _MapPinMarker(),
-                                ),
-                                Positioned(
-                                  left: 150,
-                                  top: 130,
-                                  child: _MapPinMarker(),
-                                ),
-                                Positioned(
-                                  left: 280,
-                                  top: 100,
-                                  child: _MapPinMarker(),
-                                ),
-                                Positioned(
-                                  left: 100,
-                                  top: 170,
-                                  child: _MapPinMarker(),
-                                ),
-                                // Center location indicator (user location)
-                                Center(
-                                  child: Container(
-                                    width: 20,
-                                    height: 20,
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF6C7200),
-                                      shape: BoxShape.circle,
-                                      border: Border.all(color: Colors.white, width: 3),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.2),
-                                          blurRadius: 8,
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -1293,37 +1455,12 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                       ),
                     ],
                     const SizedBox(height: 24),
-                    // Merchant list
-                    const _PlaceListItem(
-                      category: 'Retail',
-                      name: 'JSK News',
-                      address: '23 Great Guildford Stret London SE1 9EZ',
-                    ),
-                    const _PlaceListItem(
-                      category: 'Retail',
-                      name: 'Tech Haven',
-                      address: '45 Silicon Avenue San Francisco CA 94107',
-                    ),
-                    const _PlaceListItem(
-                      category: 'Retail',
-                      name: 'Book Nook',
-                      address: '76 Elm Street Springfield IL 62701',
-                    ),
-                    const _PlaceListItem(
-                      category: 'Retail',
-                      name: 'Gourmet Eats',
-                      address: '12 Market Square Chicago IL 60601',
-                    ),
-                    const _PlaceListItem(
-                      category: 'Retail',
-                      name: 'Fashion Fusion',
-                      address: '88 Style Boulevard New York NY 10001',
-                    ),
-                    const _PlaceListItem(
-                      category: 'Retail',
-                      name: 'Home Comforts',
-                      address: '34 Cozy Lane Denver CO 80202',
-                    ),
+                    // Merchant list - using real data
+                    ...merchantsData.map((merchant) => _PlaceListItem(
+                      category: _getMccCategory(merchant.mcc),
+                      name: merchant.merchantName,
+                      address: '${merchant.streetAddress} ${merchant.city} ${merchant.zipCode}',
+                    )).toList(),
                     const SizedBox(height: 100),
                   ],
                 ),
@@ -1333,6 +1470,26 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
         ),
       ),
     );
+  }
+}
+
+// Helper function to get category from MCC code
+String _getMccCategory(String mcc) {
+  switch (mcc) {
+    case '5812':
+    case '5813':
+    case '5814':
+      return 'Food & Dining';
+    case '7230':
+      return 'Beauty & Barber';
+    case '7523':
+      return 'Parking';
+    case '7538':
+      return 'Automotive';
+    case '7832':
+      return 'Entertainment';
+    default:
+      return 'Retail';
   }
 }
 
@@ -1435,35 +1592,4 @@ class _PlaceListItem extends StatelessWidget {
   }
 }
 
-class _MapPinMarker extends StatelessWidget {
-  const _MapPinMarker();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF6F8C7),
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 2),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.15),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Center(
-        child: SvgPicture.asset(
-          'assets/images/store.svg',
-          width: 18,
-          height: 18,
-          colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
-        ),
-      ),
-    );
-  }
-}
 
