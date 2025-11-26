@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
+  flutter_svg: ^2.0.9
 
 dev_dependencies:
   flutter_test:
@@ -22,6 +23,52 @@ flutter:
   # Assets for images, icons, and other design files
   assets:
     - assets/images/
-    # You can also add specific files or subdirectories:
-    # - assets/images/logo.png
-    # - assets/images/icons/
+    - assets/images/Business Account - Home-1.png
+    - assets/images/Business Account - Home.png
+    - assets/images/Home -_ Happy path.png
+    - assets/images/Home -_ User with no card.png
+    - assets/images/IconFire2.png
+    - assets/images/IconFire3.png
+    - assets/images/image 3.png
+    - assets/images/Sheet -_ First cashback payment-1.png
+    - assets/images/Sheet -_ First cashback payment.png
+    - assets/images/Sheet -_ Happy path.png
+    - assets/images/Sheet -_ Loading.png
+    # SVG Icons from Teya Lemonade DS
+    - assets/images/airplane.svg
+    - assets/images/arrow-rotate-ccw.svg
+    - assets/images/arrows-exchange.svg
+    - assets/images/bank.svg
+    - assets/images/calendar.svg
+    - assets/images/car.svg
+    - assets/images/card.svg
+    - assets/images/chart-trending.svg
+    - assets/images/clock.svg
+    - assets/images/cookie.svg
+    - assets/images/download.svg
+    - assets/images/gear.svg
+    - assets/images/gift.svg
+    - assets/images/heart.svg
+    - assets/images/home.svg
+    - assets/images/list.svg
+    - assets/images/money-pounds.svg
+    - assets/images/plus.svg
+    - assets/images/rotate-money.svg
+    - assets/images/store.svg
+    - assets/images/wallet.svg
+
+  # Fonts from Teya Lemonade DS
+  fonts:
+    - family: Figtree
+      fonts:
+        - asset: assets/fonts/Figtree-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Figtree-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Figtree-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Figtree-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Figtree-Italic.ttf
+          weight: 400
+          style: italic
