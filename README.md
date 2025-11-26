@@ -33,4 +33,18 @@ flutter run -d chrome
 
 ---
 
+## 🌐 Deploy to GitHub Pages
+
+### One-time Setup:
+1. Push your code to GitHub
+2. Go to your repository **Settings** → **Pages**
+3. Under **Source**, select **GitHub Actions**
+
+### Auto-deploy:
+Every push to `main` branch automatically builds and deploys your app.
+
+Your app will be live at: `https://[your-username].github.io/[repo-name]/`
+
+---
+
 Built for Teya Innovation Days 2025 🌱
