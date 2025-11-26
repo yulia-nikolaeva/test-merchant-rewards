@@ -1457,138 +1457,7 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    // Places near you section
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Places near you',
-                            style: TextStyle(
-                              color: Color(0xFF151712),
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _isMapView = false;
-                                  });
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: !_isMapView ? const Color(0xFF6C7200) : Colors.white,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: _isMapView ? Border.all(color: const Color(0xFFE5E7EB)) : null,
-                                  ),
-                                  child: SvgPicture.asset(
-                                    'assets/images/list.svg',
-                                    width: 16,
-                                    height: 16,
-                                    colorFilter: ColorFilter.mode(
-                                      !_isMapView ? Colors.white : const Color(0xFF151712),
-                                      BlendMode.srcIn,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _isMapView = true;
-                                  });
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: _isMapView ? const Color(0xFF6C7200) : Colors.white,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: !_isMapView ? Border.all(color: const Color(0xFFE5E7EB)) : null,
-                                  ),
-                                  child: SvgPicture.asset(
-                                    'assets/images/map-pin.svg',
-                                    width: 16,
-                                    height: 16,
-                                    colorFilter: ColorFilter.mode(
-                                      _isMapView ? Colors.white : const Color(0xFF151712),
-                                      BlendMode.srcIn,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Search bar
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF3F4F6),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              'assets/images/search.svg',
-                              width: 20,
-                              height: 20,
-                              colorFilter: const ColorFilter.mode(Color(0xFF9CA3AF), BlendMode.srcIn),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: TextField(
-                                controller: _searchController,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _searchQuery = value;
-                                  });
-                                },
-                                style: const TextStyle(
-                                  color: Color(0xFF151712),
-                                  fontSize: 15,
-                                ),
-                                decoration: const InputDecoration(
-                                  hintText: 'Search places',
-                                  hintStyle: TextStyle(
-                                    color: Color(0xFF9CA3AF),
-                                    fontSize: 15,
-                                  ),
-                                  border: InputBorder.none,
-                                  contentPadding: EdgeInsets.symmetric(vertical: 12),
-                                ),
-                              ),
-                            ),
-                            if (_searchQuery.isNotEmpty)
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _searchController.clear();
-                                    _searchQuery = '';
-                                  });
-                                },
-                                child: const Icon(
-                                  Icons.clear,
-                                  size: 20,
-                                  color: Color(0xFF9CA3AF),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
                     // Category filter section with title
-                    const SizedBox(height: 24),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
@@ -1790,6 +1659,137 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                         ),
                       ),
                     ],
+                    const SizedBox(height: 24),
+                    // Places near you section with toggle buttons
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Places near you',
+                            style: TextStyle(
+                              color: Color(0xFF151712),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _isMapView = false;
+                                  });
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: !_isMapView ? const Color(0xFF6C7200) : Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: _isMapView ? Border.all(color: const Color(0xFFE5E7EB)) : null,
+                                  ),
+                                  child: SvgPicture.asset(
+                                    'assets/images/list.svg',
+                                    width: 16,
+                                    height: 16,
+                                    colorFilter: ColorFilter.mode(
+                                      !_isMapView ? Colors.white : const Color(0xFF151712),
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _isMapView = true;
+                                  });
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: _isMapView ? const Color(0xFF6C7200) : Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: !_isMapView ? Border.all(color: const Color(0xFFE5E7EB)) : null,
+                                  ),
+                                  child: SvgPicture.asset(
+                                    'assets/images/map-pin.svg',
+                                    width: 16,
+                                    height: 16,
+                                    colorFilter: ColorFilter.mode(
+                                      _isMapView ? Colors.white : const Color(0xFF151712),
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Search bar
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF3F4F6),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/images/search.svg',
+                              width: 20,
+                              height: 20,
+                              colorFilter: const ColorFilter.mode(Color(0xFF9CA3AF), BlendMode.srcIn),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: TextField(
+                                controller: _searchController,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _searchQuery = value;
+                                  });
+                                },
+                                style: const TextStyle(
+                                  color: Color(0xFF151712),
+                                  fontSize: 15,
+                                ),
+                                decoration: const InputDecoration(
+                                  hintText: 'Search places',
+                                  hintStyle: TextStyle(
+                                    color: Color(0xFF9CA3AF),
+                                    fontSize: 15,
+                                  ),
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.symmetric(vertical: 12),
+                                ),
+                              ),
+                            ),
+                            if (_searchQuery.isNotEmpty)
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _searchController.clear();
+                                    _searchQuery = '';
+                                  });
+                                },
+                                child: const Icon(
+                                  Icons.clear,
+                                  size: 20,
+                                  color: Color(0xFF9CA3AF),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 24),
                     // Merchant list - using filtered data
                     if (filteredMerchants.isEmpty)
