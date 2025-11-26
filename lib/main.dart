@@ -541,7 +541,7 @@ class _BalanceCard extends StatelessWidget {
               Expanded(
                 child: _QuickActionButton(
                   label: 'Add',
-                  iconPath: 'assets/images/plus.svg',
+                  iconPath: 'assets/images/money-arrow-up.svg',
                 ),
               ),
               SizedBox(width: 12),
