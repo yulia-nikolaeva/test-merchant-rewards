@@ -23,22 +23,14 @@ flutter:
   # Assets for images, icons, and other design files
   assets:
     - assets/images/
-    - assets/images/Business Account - Home-1.png
-    - assets/images/Business Account - Home.png
-    - assets/images/Home -_ Happy path.png
-    - assets/images/Home -_ User with no card.png
-    - assets/images/IconFire2.png
-    - assets/images/IconFire3.png
-    - assets/images/image 3.png
-    - assets/images/Sheet -_ First cashback payment-1.png
-    - assets/images/Sheet -_ First cashback payment.png
-    - assets/images/Sheet -_ Happy path.png
-    - assets/images/Sheet -_ Loading.png
+    - assets/designs/
     # SVG Icons from Teya Lemonade DS
     - assets/images/airplane.svg
     - assets/images/arrow-rotate-ccw.svg
     - assets/images/arrows-exchange.svg
     - assets/images/bank.svg
+    - assets/images/brand-teya.svg
+    - assets/images/brand-teya-symbol.svg
     - assets/images/calendar.svg
     - assets/images/car.svg
     - assets/images/card.svg
@@ -51,9 +43,11 @@ flutter:
     - assets/images/heart.svg
     - assets/images/home.svg
     - assets/images/list.svg
+    - assets/images/map-pin.svg
     - assets/images/money-pounds.svg
     - assets/images/plus.svg
     - assets/images/rotate-money.svg
+    - assets/images/search.svg
     - assets/images/store.svg
     - assets/images/wallet.svg
 
