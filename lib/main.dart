@@ -1294,8 +1294,11 @@ class CashbackMerchantScreen extends StatefulWidget {
 class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
   bool _isMapView = false;
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   String _searchQuery = '';
   String? _selectedCategory;
+  int? _selectedMerchantId;
+  final Map<int, GlobalKey> _itemKeys = {};
 
   @override
   void initState() {
@@ -1306,7 +1309,22 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _scrollToItem(int merchantId) {
+    final key = _itemKeys[merchantId];
+    if (key != null && key.currentContext != null) {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        Scrollable.ensureVisible(
+          key.currentContext!,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+          alignment: 0.2,
+        );
+      });
+    }
   }
 
   List<MerchantData> get filteredMerchants {
@@ -1390,9 +1408,10 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                 ],
               ),
             ),
-            // Main scrollable content
+            // Main content - all scrollable together
             Expanded(
               child: SingleChildScrollView(
+                controller: _scrollController,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1631,8 +1650,8 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                             borderRadius: BorderRadius.circular(20),
                             child: FlutterMap(
                               options: MapOptions(
-                                initialCenter: LatLng(48.0, 8.0),
-                                initialZoom: 5.0,
+                                initialCenter: LatLng(51.5, 0.0),
+                                initialZoom: 5.5,
                                 minZoom: 3.0,
                                 maxZoom: 18.0,
                               ),
@@ -1647,26 +1666,25 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                                 ),
                                 MarkerLayer(
                                   markers: filteredMerchants.map((merchant) {
+                                    final isSelected = _selectedMerchantId == merchant.id;
                                     return Marker(
                                       point: merchant.location,
                                       width: 36,
                                       height: 36,
                                       child: GestureDetector(
                                         onTap: () {
-                                          // Show merchant info in a snackbar or dialog
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                '${merchant.merchantName}\n${merchant.city}, ${merchant.countryCode}',
-                                              ),
-                                              duration: const Duration(seconds: 2),
-                                              behavior: SnackBarBehavior.floating,
-                                            ),
-                                          );
+                                          setState(() {
+                                            // Toggle selection: deselect if already selected
+                                            if (_selectedMerchantId == merchant.id) {
+                                              _selectedMerchantId = null;
+                                            } else {
+                                              _selectedMerchantId = merchant.id;
+                                            }
+                                          });
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFFF6F8C7),
+                                            color: isSelected ? const Color(0xFF6C7200) : const Color(0xFFF6F8C7),
                                             shape: BoxShape.circle,
                                             border: Border.all(color: Colors.white, width: 2),
                                             boxShadow: [
@@ -1682,8 +1700,8 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                                               'assets/images/store.svg',
                                               width: 18,
                                               height: 18,
-                                              colorFilter: const ColorFilter.mode(
-                                                Color(0xFF151712),
+                                              colorFilter: ColorFilter.mode(
+                                                isSelected ? Colors.white : const Color(0xFF151712),
                                                 BlendMode.srcIn,
                                               ),
                                             ),
@@ -1693,11 +1711,11 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                                     );
                                   }).toList(),
                                 ),
-                                // User location marker (center of Europe)
+                                // User location marker (UK)
                                 MarkerLayer(
                                   markers: [
                                     Marker(
-                                      point: LatLng(48.0, 8.0),
+                                      point: LatLng(51.5, 0.0),
                                       width: 20,
                                       height: 20,
                                       child: Container(
@@ -1889,11 +1907,29 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                         ),
                       )
                     else
-                      ...filteredMerchants.map((merchant) => _PlaceListItem(
-                        category: _getMccCategory(merchant.mcc),
-                        name: merchant.merchantName,
-                        address: '${merchant.streetAddress} ${merchant.city} ${merchant.zipCode}',
-                      )).toList(),
+                      ...filteredMerchants.map((merchant) {
+                        // Create or reuse GlobalKey for each merchant
+                        _itemKeys.putIfAbsent(merchant.id, () => GlobalKey());
+
+                        return _PlaceListItem(
+                          key: _itemKeys[merchant.id],
+                          merchant: merchant,
+                          category: _getMccCategory(merchant.mcc),
+                          name: merchant.merchantName,
+                          address: '${merchant.streetAddress} ${merchant.city} ${merchant.zipCode}',
+                          isSelected: _selectedMerchantId == merchant.id,
+                          onTap: () {
+                            setState(() {
+                              // Toggle selection: deselect if already selected
+                              if (_selectedMerchantId == merchant.id) {
+                                _selectedMerchantId = null;
+                              } else {
+                                _selectedMerchantId = merchant.id;
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
                     const SizedBox(height: 100),
                   ],
                 ),
@@ -1974,73 +2010,86 @@ class _CategoryIconFilter extends StatelessWidget {
 }
 
 class _PlaceListItem extends StatelessWidget {
+  final MerchantData merchant;
   final String category;
   final String name;
   final String address;
+  final bool isSelected;
+  final VoidCallback onTap;
 
   const _PlaceListItem({
+    super.key,
+    required this.merchant,
     required this.category,
     required this.name,
     required this.address,
+    required this.isSelected,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: const Color(0xFFF6F8C7),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Center(
-              child: SvgPicture.asset(
-                'assets/images/store.svg',
-                width: 24,
-                height: 24,
-                colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: isSelected ? const Color(0xFF6C7200) : const Color(0xFFF6F8C7),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: SvgPicture.asset(
+                  'assets/images/store.svg',
+                  width: 24,
+                  height: 24,
+                  colorFilter: ColorFilter.mode(
+                    isSelected ? Colors.white : const Color(0xFF151712),
+                    BlendMode.srcIn,
+                  ),
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  category,
-                  style: const TextStyle(
-                    color: Color(0xFF8F928C),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    category,
+                    style: const TextStyle(
+                      color: Color(0xFF8F928C),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  name,
-                  style: const TextStyle(
-                    color: Color(0xFF151712),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  const SizedBox(height: 4),
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      color: Color(0xFF151712),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  address,
-                  style: const TextStyle(
-                    color: Color(0xFF8F928C),
-                    fontSize: 13,
+                  const SizedBox(height: 4),
+                  Text(
+                    address,
+                    style: const TextStyle(
+                      color: Color(0xFF8F928C),
+                      fontSize: 13,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
