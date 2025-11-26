@@ -377,38 +377,36 @@ class PhoneFrame extends StatelessWidget {
             // Right side - Branded text
             Expanded(
               flex: 1,
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(60.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        'Buy local.\nGrow together.',
-                        style: TextStyle(
-                          fontFamily: 'Figtree',
-                          fontSize: 72,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          height: 1.1,
-                          letterSpacing: -2,
-                        ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(40.0, 60.0, 60.0, 60.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      'Buy local.\nGrow together.',
+                      style: TextStyle(
+                        fontFamily: 'Figtree',
+                        fontSize: 72,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        height: 1.1,
+                        letterSpacing: -2,
                       ),
-                      SizedBox(height: 24),
-                      Text(
-                        'When Teya merchants buy from other\nTeya merchants, everyone wins with\nincreased cashback.',
-                        style: TextStyle(
-                          fontFamily: 'Figtree',
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF666666),
-                          height: 1.5,
-                          letterSpacing: -0.3,
-                        ),
+                    ),
+                    SizedBox(height: 24),
+                    Text(
+                      'When Teya merchants buy from other\nTeya merchants, everyone wins with\nincreased cashback.',
+                      style: TextStyle(
+                        fontFamily: 'Figtree',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF666666),
+                        height: 1.5,
+                        letterSpacing: -0.3,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
