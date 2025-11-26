@@ -1,16 +1,36 @@
-# test_merchant_rewards_webapp
+# 🏪 Merchant Rewards
 
-A new Flutter project.
+**Buy local. Grow together.**
 
-## Getting Started
+## 💡 The Idea
 
-This project is a starting point for a Flutter application.
+Create a merchant reward network that connects Business Account users through a cross-merchant cashback system. When a Teya merchant makes a purchase at another Teya merchant, they receive **extra cashback** for staying within the ecosystem.
 
-A few resources to get you started if this is your first Flutter project:
+**Example:** *"Have a coffee at Onion Garden ☕ and get extra cashback for supporting a fellow Teya merchant."*
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+This promotes merchant-to-merchant spending, boosts retention, and enhances local ecosystem growth.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+
+## 📱 This Prototype
+
+A Flutter web app showcasing the Merchant Rewards concept with:
+
+- 💰 **Cashback Dashboard** - View balance, streak progress, and upcoming payments
+- 🗺️ **Interactive Map** - Discover Teya merchants across UK & Europe
+- 🏷️ **Category Filters** - Browse by Cafe, Restaurant, Retail, Services, Gifts
+- 🔍 **Search & Selection** - Find and highlight merchants on map and list
+- 📲 **Mobile-optimized UI** - Teya brand design with intuitive navigation
+
+---
+
+## 🚀 Run the Prototype
+
+```bash
+flutter pub get
+flutter run -d chrome
+```
+
+---
+
+Built for Teya Innovation Days 2025 🌱
