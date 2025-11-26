@@ -876,317 +876,344 @@ class CashbackMerchantScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const headerColor = Color(0xFFE1E456);
     const pageBackground = Color(0xFFF7F8F2);
 
     return Scaffold(
-      backgroundColor: headerColor,
+      backgroundColor: pageBackground,
       body: SafeArea(
-        child: Stack(
+        child: Column(
           children: [
-            Positioned.fill(
-              top: 200,
-              child: Container(color: pageBackground),
-            ),
-            Column(
-              children: [
-                // Status bar
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text(
-                        '9:41',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF151712),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Icon(Icons.signal_cellular_4_bar, size: 16, color: Color(0xFF151712)),
-                          SizedBox(width: 4),
-                          Icon(Icons.wifi, size: 16, color: Color(0xFF151712)),
-                          SizedBox(width: 4),
-                          Icon(Icons.battery_full, size: 20, color: Color(0xFF151712)),
-                        ],
-                      ),
+            // Status bar
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Text(
+                    '9:41',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF151712),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Icon(Icons.signal_cellular_4_bar, size: 16, color: Color(0xFF151712)),
+                      SizedBox(width: 4),
+                      Icon(Icons.wifi, size: 16, color: Color(0xFF151712)),
+                      SizedBox(width: 4),
+                      Icon(Icons.battery_full, size: 20, color: Color(0xFF151712)),
                     ],
                   ),
-                ),
-                // Main content
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Back button and title
-                        Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () => Navigator.pop(context),
-                              child: Container(
-                                width: 32,
-                                height: 32,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(10),
+                ],
+              ),
+            ),
+            // Header with back button
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              color: Colors.white,
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: const Icon(
+                      Icons.arrow_back,
+                      color: Color(0xFF151712),
+                      size: 24,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Main scrollable content
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Cashback amount card
+                    Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 12,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          const Text(
+                            'Buy local cashback',
+                            style: TextStyle(
+                              color: Color(0xFF8F928C),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            '£13.21',
+                            style: TextStyle(
+                              color: Color(0xFF151712),
+                              fontSize: 40,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          // Streak section
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFFF8F0),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    const Text(
+                                      '🔥',
+                                      style: TextStyle(fontSize: 24),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    const Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '3 days streak!',
+                                            style: TextStyle(
+                                              color: Color(0xFF151712),
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          SizedBox(height: 2),
+                                          Text(
+                                            'You have unlocked a cashback boost',
+                                            style: TextStyle(
+                                              color: Color(0xFF8F928C),
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                child: const Icon(
-                                  Icons.arrow_back,
-                                  color: Colors.white,
-                                  size: 18,
+                                const SizedBox(height: 16),
+                                // Progress dots
+                                Row(
+                                  children: List.generate(5, (index) {
+                                    final isCompleted = index < 3;
+                                    return Expanded(
+                                      child: Row(
+                                        children: [
+                                          if (index > 0)
+                                            Expanded(
+                                              child: Container(
+                                                height: 3,
+                                                color: isCompleted ? const Color(0xFFF97316) : const Color(0xFFD1D5DB),
+                                              ),
+                                            ),
+                                          Container(
+                                            width: 40,
+                                            height: 40,
+                                            decoration: BoxDecoration(
+                                              color: isCompleted ? const Color(0xFFF97316) : const Color(0xFFD1D5DB),
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: const Center(
+                                              child: Text(
+                                                '🔥',
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                            ),
+                                          ),
+                                          if (index < 4)
+                                            Expanded(
+                                              child: Container(
+                                                height: 3,
+                                                color: isCompleted ? const Color(0xFFF97316) : const Color(0xFFD1D5DB),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Categories section
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: const [
+                          Text(
+                            'Categories',
+                            style: TextStyle(
+                              color: Color(0xFF151712),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            'View all',
+                            style: TextStyle(
+                              color: Color(0xFF8F928C),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Category icons
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: const [
+                          _CategoryIcon(iconPath: 'assets/images/cookie.svg'),
+                          _CategoryIcon(iconPath: 'assets/images/car.svg'),
+                          _CategoryIcon(iconPath: 'assets/images/airplane.svg'),
+                          _CategoryIcon(iconPath: 'assets/images/gift.svg'),
+                          _CategoryIcon(iconPath: 'assets/images/store.svg'),
+                          _CategoryIcon(iconPath: 'assets/images/heart.svg'),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    // Places near you section
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Places near you',
+                            style: TextStyle(
+                              color: Color(0xFF151712),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF6C7200),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: SvgPicture.asset(
+                                  'assets/images/list.svg',
+                                  width: 16,
+                                  height: 16,
+                                  colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                                 ),
                               ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: const Color(0xFFE5E7EB)),
+                                ),
+                                child: SvgPicture.asset(
+                                  'assets/images/map-pin.svg',
+                                  width: 16,
+                                  height: 16,
+                                  colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Search bar
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF3F4F6),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/images/search.svg',
+                              width: 20,
+                              height: 20,
+                              colorFilter: const ColorFilter.mode(Color(0xFF9CA3AF), BlendMode.srcIn),
                             ),
                             const SizedBox(width: 12),
-                            const Expanded(
-                              child: Text(
-                                'Cashback & Merchants',
-                                style: TextStyle(
-                                  color: Color(0xFF151712),
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: SvgPicture.asset(
-                                'assets/images/search.svg',
-                                width: 20,
-                                height: 20,
-                                colorFilter: const ColorFilter.mode(
-                                  Color(0xFF151712),
-                                  BlendMode.srcIn,
-                                ),
+                            const Text(
+                              'Search places',
+                              style: TextStyle(
+                                color: Color(0xFF9CA3AF),
+                                fontSize: 15,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 24),
-                        // Cashback to receive card
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(24),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 20,
-                                offset: Offset(0, 8),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFFE2FAF1),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Center(
-                                      child: SvgPicture.asset(
-                                        'assets/images/money-pounds.svg',
-                                        width: 20,
-                                        height: 20,
-                                        colorFilter: const ColorFilter.mode(
-                                          Color(0xFF151712),
-                                          BlendMode.srcIn,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  const Expanded(
-                                    child: Text(
-                                      'Cashback to receive',
-                                      style: TextStyle(
-                                        color: Color(0xFF8F928C),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              const Text(
-                                '£13.21',
-                                style: TextStyle(
-                                  color: Color(0xFF151712),
-                                  fontSize: 36,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              const Text(
-                                'Payment on 1st October',
-                                style: TextStyle(
-                                  color: Color(0xFF8F928C),
-                                  fontSize: 13,
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF6C7200),
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(vertical: 14),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    elevation: 0,
-                                  ),
-                                  child: const Text(
-                                    'View history',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        // Nearby merchants section
-                        const Text(
-                          'Nearby merchants',
-                          style: TextStyle(
-                            color: Color(0xFF151712),
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        // Map placeholder
-                        Container(
-                          width: double.infinity,
-                          height: 200,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE5E7EB),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: const Color(0xFFD1D5DB),
-                              width: 1,
-                            ),
-                          ),
-                          child: Stack(
-                            children: [
-                              // Grid pattern to simulate map
-                              ...List.generate(20, (index) {
-                                return Positioned(
-                                  left: (index % 4) * 90.0 + 20,
-                                  top: (index ~/ 4) * 50.0 + 20,
-                                  child: Container(
-                                    width: 60,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.5),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                  ),
-                                );
-                              }),
-                              // Map pins
-                              Positioned(
-                                left: 50,
-                                top: 60,
-                                child: _MapPin(color: const Color(0xFF10B981)),
-                              ),
-                              Positioned(
-                                left: 200,
-                                top: 40,
-                                child: _MapPin(color: const Color(0xFF3B82F6)),
-                              ),
-                              Positioned(
-                                left: 280,
-                                top: 120,
-                                child: _MapPin(color: const Color(0xFFF59E0B)),
-                              ),
-                              Positioned(
-                                left: 120,
-                                top: 140,
-                                child: _MapPin(color: const Color(0xFF8B5CF6)),
-                              ),
-                              // Center location indicator
-                              Center(
-                                child: Container(
-                                  width: 16,
-                                  height: 16,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF7C3AED),
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.white, width: 3),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        // Merchant list
-                        _MerchantListItem(
-                          name: 'Coffee Corner',
-                          distance: '0.2 km',
-                          cashback: '5% cashback',
-                          category: 'Cafe',
-                          iconPath: 'assets/images/cookie.svg',
-                          color: const Color(0xFF10B981),
-                        ),
-                        const SizedBox(height: 12),
-                        _MerchantListItem(
-                          name: 'Tech Store',
-                          distance: '0.5 km',
-                          cashback: '3% cashback',
-                          category: 'Electronics',
-                          iconPath: 'assets/images/store.svg',
-                          color: const Color(0xFF3B82F6),
-                        ),
-                        const SizedBox(height: 12),
-                        _MerchantListItem(
-                          name: 'Local Grocery',
-                          distance: '0.8 km',
-                          cashback: '2% cashback',
-                          category: 'Food',
-                          iconPath: 'assets/images/gift.svg',
-                          color: const Color(0xFFF59E0B),
-                        ),
-                        const SizedBox(height: 12),
-                        _MerchantListItem(
-                          name: 'Fashion Boutique',
-                          distance: '1.1 km',
-                          cashback: '8% cashback',
-                          category: 'Clothing',
-                          iconPath: 'assets/images/heart.svg',
-                          color: const Color(0xFF8B5CF6),
-                        ),
-                        const SizedBox(height: 100),
-                      ],
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 24),
+                    // Merchant list
+                    const _PlaceListItem(
+                      category: 'Retail',
+                      name: 'JSK News',
+                      address: '23 Great Guildford Stret London SE1 9EZ',
+                    ),
+                    const _PlaceListItem(
+                      category: 'Retail',
+                      name: 'Tech Haven',
+                      address: '45 Silicon Avenue San Francisco CA 94107',
+                    ),
+                    const _PlaceListItem(
+                      category: 'Retail',
+                      name: 'Book Nook',
+                      address: '76 Elm Street Springfield IL 62701',
+                    ),
+                    const _PlaceListItem(
+                      category: 'Retail',
+                      name: 'Gourmet Eats',
+                      address: '12 Market Square Chicago IL 60601',
+                    ),
+                    const _PlaceListItem(
+                      category: 'Retail',
+                      name: 'Fashion Fusion',
+                      address: '88 Style Boulevard New York NY 10001',
+                    ),
+                    const _PlaceListItem(
+                      category: 'Retail',
+                      name: 'Home Comforts',
+                      address: '34 Cozy Lane Denver CO 80202',
+                    ),
+                    const SizedBox(height: 100),
+                  ],
                 ),
-              ],
+              ),
             ),
           ],
         ),
@@ -1195,87 +1222,63 @@ class CashbackMerchantScreen extends StatelessWidget {
   }
 }
 
-class _MapPin extends StatelessWidget {
-  final Color color;
+class _CategoryIcon extends StatelessWidget {
+  final String iconPath;
 
-  const _MapPin({required this.color});
+  const _CategoryIcon({required this.iconPath});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 32,
-      height: 32,
-      decoration: BoxDecoration(
-        color: color,
+      width: 48,
+      height: 48,
+      decoration: const BoxDecoration(
+        color: Color(0xFFF6F8C7),
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 2),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.4),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
-      child: const Icon(
-        Icons.store,
-        color: Colors.white,
-        size: 16,
+      child: Center(
+        child: SvgPicture.asset(
+          iconPath,
+          width: 24,
+          height: 24,
+          colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
+        ),
       ),
     );
   }
 }
 
-class _MerchantListItem extends StatelessWidget {
-  final String name;
-  final String distance;
-  final String cashback;
+class _PlaceListItem extends StatelessWidget {
   final String category;
-  final String iconPath;
-  final Color color;
+  final String name;
+  final String address;
 
-  const _MerchantListItem({
-    required this.name,
-    required this.distance,
-    required this.cashback,
+  const _PlaceListItem({
     required this.category,
-    required this.iconPath,
-    required this.color,
+    required this.name,
+    required this.address,
   });
 
   @override
   Widget build(BuildContext context) {
-    const primaryText = Color(0xFF151712);
-    const subtleText = Color(0xFF8F928C);
-
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: const Color(0xFFF6F8C7),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
               child: SvgPicture.asset(
-                iconPath,
+                'assets/images/store.svg',
                 width: 24,
                 height: 24,
-                colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
               ),
             ),
           ),
@@ -1285,55 +1288,31 @@ class _MerchantListItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
+                  category,
+                  style: const TextStyle(
+                    color: Color(0xFF8F928C),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
                   name,
                   style: const TextStyle(
-                    color: primaryText,
-                    fontSize: 15,
+                    color: Color(0xFF151712),
+                    fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Text(
-                      category,
-                      style: const TextStyle(
-                        color: subtleText,
-                        fontSize: 13,
-                      ),
-                    ),
-                    const Text(
-                      ' • ',
-                      style: TextStyle(
-                        color: subtleText,
-                        fontSize: 13,
-                      ),
-                    ),
-                    Text(
-                      distance,
-                      style: const TextStyle(
-                        color: subtleText,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
+                Text(
+                  address,
+                  style: const TextStyle(
+                    color: Color(0xFF8F928C),
+                    fontSize: 13,
+                  ),
                 ),
               ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: const Color(0xFFE2FAF1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              cashback,
-              style: const TextStyle(
-                color: Color(0xFF10B981),
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
             ),
           ),
         ],
