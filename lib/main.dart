@@ -309,44 +309,110 @@ class PhoneFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Teya brand tertiary colors - subtle, toned-down palette
+    const offWhite = Color(0xFFF5F5F5);      // #F5F5F5
+    const lightestLime = Color(0xFFF1F3B6);  // #F1F3B6
+    const lighterLime = Color(0xFFEBEC91);   // #EBEC91
+
     return Scaffold(
-      backgroundColor: const Color(0xFF1F2937),
-      body: Center(
-        child: Container(
-          width: 400,
-          height: 844,
-          decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.circular(40),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.5),
-                blurRadius: 30,
-                spreadRadius: 5,
-                offset: const Offset(0, 10),
-              ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              offWhite,
+              lightestLime,
+              lighterLime,
+              lightestLime,
+              offWhite,
             ],
+            stops: [0.0, 0.25, 0.5, 0.75, 1.0],
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(40),
-            child: Container(
-              margin: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(32),
-                color: Colors.white,
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(32),
-                child: Navigator(
-                  onGenerateRoute: (settings) {
-                    return MaterialPageRoute(
-                      builder: (context) => const BusinessAccountHome(),
-                    );
-                  },
+        ),
+        child: Row(
+          children: [
+            // Left side - Phone prototype
+            Expanded(
+              flex: 1,
+              child: Center(
+                child: Container(
+                  width: 400,
+                  height: 844,
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(40),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.5),
+                        blurRadius: 30,
+                        spreadRadius: 5,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(40),
+                    child: Container(
+                      margin: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(32),
+                        color: Colors.white,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(32),
+                        child: Navigator(
+                          onGenerateRoute: (settings) {
+                            return MaterialPageRoute(
+                              builder: (context) => const BusinessAccountHome(),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
+            // Right side - Branded text
+            Expanded(
+              flex: 1,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(60.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        'Buy local.\nGrow together.',
+                        style: TextStyle(
+                          fontFamily: 'Figtree',
+                          fontSize: 72,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          height: 1.1,
+                          letterSpacing: -2,
+                        ),
+                      ),
+                      SizedBox(height: 24),
+                      Text(
+                        'When Teya merchants buy from other\nTeya merchants, everyone wins with\nincreased cashback.',
+                        style: TextStyle(
+                          fontFamily: 'Figtree',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF666666),
+                          height: 1.5,
+                          letterSpacing: -0.3,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
