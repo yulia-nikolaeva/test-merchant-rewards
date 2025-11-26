@@ -871,8 +871,15 @@ class _BottomNavItem extends StatelessWidget {
 //                    CASHBACK MERCHANT SCREEN
 // ═══════════════════════════════════════════════════════════════════════
 
-class CashbackMerchantScreen extends StatelessWidget {
+class CashbackMerchantScreen extends StatefulWidget {
   const CashbackMerchantScreen({super.key});
+
+  @override
+  State<CashbackMerchantScreen> createState() => _CashbackMerchantScreenState();
+}
+
+class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
+  bool _isMapView = false;
 
   @override
   Widget build(BuildContext context) {
@@ -1115,32 +1122,53 @@ class CashbackMerchantScreen extends StatelessWidget {
                           ),
                           Row(
                             children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF6C7200),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: SvgPicture.asset(
-                                  'assets/images/list.svg',
-                                  width: 16,
-                                  height: 16,
-                                  colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _isMapView = false;
+                                  });
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: !_isMapView ? const Color(0xFF6C7200) : Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: _isMapView ? Border.all(color: const Color(0xFFE5E7EB)) : null,
+                                  ),
+                                  child: SvgPicture.asset(
+                                    'assets/images/list.svg',
+                                    width: 16,
+                                    height: 16,
+                                    colorFilter: ColorFilter.mode(
+                                      !_isMapView ? Colors.white : const Color(0xFF151712),
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: const Color(0xFFE5E7EB)),
-                                ),
-                                child: SvgPicture.asset(
-                                  'assets/images/map-pin.svg',
-                                  width: 16,
-                                  height: 16,
-                                  colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _isMapView = true;
+                                  });
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: _isMapView ? const Color(0xFF6C7200) : Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: !_isMapView ? Border.all(color: const Color(0xFFE5E7EB)) : null,
+                                  ),
+                                  child: SvgPicture.asset(
+                                    'assets/images/map-pin.svg',
+                                    width: 16,
+                                    height: 16,
+                                    colorFilter: ColorFilter.mode(
+                                      _isMapView ? Colors.white : const Color(0xFF151712),
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
@@ -1178,6 +1206,92 @@ class CashbackMerchantScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+                    // Map view (only shown when map view is selected)
+                    if (_isMapView) ...[
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Container(
+                          width: double.infinity,
+                          height: 220,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE5E7EB),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: const Color(0xFFD1D5DB),
+                              width: 1,
+                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Stack(
+                              children: [
+                                // Subtle grid pattern
+                                ...List.generate(28, (index) {
+                                  return Positioned(
+                                    left: (index % 4) * 90.0 + 10,
+                                    top: (index ~/ 4) * 35.0 + 10,
+                                    child: Container(
+                                      width: 70,
+                                      height: 25,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFD1D5DB).withOpacity(0.3),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                    ),
+                                  );
+                                }),
+                                // Map pins with yellow-green backgrounds
+                                Positioned(
+                                  left: 60,
+                                  top: 50,
+                                  child: _MapPinMarker(),
+                                ),
+                                Positioned(
+                                  left: 220,
+                                  top: 70,
+                                  child: _MapPinMarker(),
+                                ),
+                                Positioned(
+                                  left: 150,
+                                  top: 130,
+                                  child: _MapPinMarker(),
+                                ),
+                                Positioned(
+                                  left: 280,
+                                  top: 100,
+                                  child: _MapPinMarker(),
+                                ),
+                                Positioned(
+                                  left: 100,
+                                  top: 170,
+                                  child: _MapPinMarker(),
+                                ),
+                                // Center location indicator (user location)
+                                Center(
+                                  child: Container(
+                                    width: 20,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF6C7200),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: Colors.white, width: 3),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.2),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 24),
                     // Merchant list
                     const _PlaceListItem(
@@ -1316,6 +1430,38 @@ class _PlaceListItem extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _MapPinMarker extends StatelessWidget {
+  const _MapPinMarker();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 36,
+      height: 36,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF6F8C7),
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Center(
+        child: SvgPicture.asset(
+          'assets/images/store.svg',
+          width: 18,
+          height: 18,
+          colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
+        ),
       ),
     );
   }
