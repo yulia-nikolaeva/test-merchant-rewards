@@ -2594,20 +2594,20 @@ class _CashbackPaymentRow extends StatelessWidget {
 void _presentCashbackSheet(BuildContext context) {
   const payments = [
     _CashbackPayment(
-      label: 'Cashback 🔥',
-      time: '20:11',
-      merchant: 'Grays Inn Barbers',
-      amount: '+£0.20',
+      label: 'Cashback 🔥🔥🔥',
+      time: '09:27',
+      merchant: 'ALL THAT FALAFEL & MORE',
+      amount: '+£0.40',
     ),
     _CashbackPayment(
       label: 'Cashback 🔥🔥',
-      time: '10:05',
+      time: '08:12',
       merchant: 'Zargos Furniture',
       amount: '+£1.30',
     ),
     _CashbackPayment(
-      label: 'Cashback 🔥🔥🔥',
-      time: '14:30',
+      label: 'Cashback 🔥',
+      time: '07:54',
       merchant: 'KST Fashion',
       amount: '+£0.50',
     ),
