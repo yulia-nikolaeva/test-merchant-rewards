@@ -5,8 +5,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:flutter/rendering.dart';
 
 const qrPrototypeUrl = 'https://yulia-nikolaeva.github.io/test-merchant-rewards/';
+const LatLng _startingPoint = LatLng(51.508030, -0.122710); // Victoria Embankment
+const Color _pinColor = Color(0xFF2F343C);
+const Color _pinSelectedColor = Color(0xFF8DBF1F); // bright green similar to reference point
 
 void main() {
   runApp(const MyApp());
@@ -1310,7 +1314,7 @@ class CashbackMerchantScreen extends StatefulWidget {
 }
 
 class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
-  bool _isMapView = false;
+  bool _isMapView = true;
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   String _searchQuery = '';
@@ -1331,16 +1335,32 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
     super.dispose();
   }
 
+  void _openFullScreenMap() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => FullscreenMapPage(
+          merchants: filteredMerchants,
+          startingPoint: _startingPoint,
+          initialSelectedMerchantId: _selectedMerchantId,
+        ),
+      ),
+    );
+  }
+
   void _scrollToItem(int merchantId) {
     final key = _itemKeys[merchantId];
-    if (key != null && key.currentContext != null) {
-      Future.delayed(const Duration(milliseconds: 100), () {
-        Scrollable.ensureVisible(
-          key.currentContext!,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-          alignment: 0.2,
-        );
+    if (key != null && key.currentContext != null && _scrollController.hasClients) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final renderObject = key.currentContext!.findRenderObject();
+        final viewport = RenderAbstractViewport.of(renderObject);
+        if (renderObject != null && viewport != null) {
+          final targetOffset = viewport.getOffsetToReveal(renderObject, 0.2).offset;
+          _scrollController.animateTo(
+            targetOffset,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeOutCubic,
+          );
+        }
       });
     }
   }
@@ -1432,6 +1452,7 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
             Expanded(
               child: SingleChildScrollView(
                 controller: _scrollController,
+                physics: const ClampingScrollPhysics(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1665,101 +1686,80 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                           height: 220,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: const Color(0xFFD1D5DB),
-                              width: 1,
-                            ),
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: _openFullScreenMap,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
                               child: FlutterMap(
                                 options: MapOptions(
-                                  initialCenter: LatLng(51.511911, -0.104472),
-                                initialZoom: 12.5,
-                                minZoom: 10.0,
-                                maxZoom: 18.0,
-                              ),
-                              children: [
-                                TileLayer(
-                                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                  userAgentPackageName: 'com.teya.merchant_rewards',
-                                  subdomains: const ['a', 'b', 'c'],
-                                  additionalOptions: const {
-                                    'attribution': '© OpenStreetMap contributors',
-                                  },
+                                  initialCenter: _startingPoint,
+                                  initialZoom: 13,
+                                  minZoom: 10.0,
+                                  maxZoom: 18.0,
+                                  onTap: (tapPosition, point) => _openFullScreenMap(),
                                 ),
-                                MarkerLayer(
-                                  markers: filteredMerchants.map((merchant) {
-                                    final isSelected = _selectedMerchantId == merchant.id;
-                                    return Marker(
-                                      point: merchant.location,
-                                      width: 36,
-                                      height: 36,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            // Toggle selection: deselect if already selected
-                                            if (_selectedMerchantId == merchant.id) {
-                                              _selectedMerchantId = null;
-                                            } else {
-                                              _selectedMerchantId = merchant.id;
-                                            }
-                                          });
-                                        },
+                                children: [
+                                  TileLayer(
+                                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                    userAgentPackageName: 'com.teya.merchant_rewards',
+                                    subdomains: const ['a', 'b', 'c'],
+                                    additionalOptions: const {
+                                      'attribution': '© OpenStreetMap contributors',
+                                    },
+                                  ),
+                                  MarkerLayer(
+                                    markers: filteredMerchants.map((merchant) {
+                                      final isSelected = _selectedMerchantId == merchant.id;
+                                      return Marker(
+                                        point: merchant.location,
+                                        width: 38,
+                                        height: 48,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              if (_selectedMerchantId == merchant.id) {
+                                                _selectedMerchantId = null;
+                                              } else {
+                                                _selectedMerchantId = merchant.id;
+                                              }
+                                            });
+                                          },
+                                            child: Image.asset(
+                                              isSelected ? 'assets/images/selected-pin.png' : 'assets/images/not-selected-pin.png',
+                                              width: 38,
+                                              height: 48,
+                                            ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                  MarkerLayer(
+                                    markers: [
+                                      Marker(
+                                        point: _startingPoint,
+                                        width: 26,
+                                        height: 26,
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            color: isSelected ? const Color(0xFF6C7200) : const Color(0xFFF6F8C7),
+                                            color: const Color(0xFF8DBF1F),
                                             shape: BoxShape.circle,
-                                            border: Border.all(color: Colors.white, width: 2),
+                                            border: Border.all(color: Colors.white, width: 3),
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.black.withOpacity(0.15),
-                                                blurRadius: 6,
-                                                offset: const Offset(0, 2),
+                                                color: Colors.black.withOpacity(0.25),
+                                                blurRadius: 8,
+                                                offset: const Offset(0, 3),
                                               ),
                                             ],
                                           ),
-                                          child: Center(
-                                            child: SvgPicture.asset(
-                                              'assets/images/store.svg',
-                                              width: 18,
-                                              height: 18,
-                                              colorFilter: ColorFilter.mode(
-                                                isSelected ? Colors.white : const Color(0xFF151712),
-                                                BlendMode.srcIn,
-                                              ),
-                                            ),
-                                          ),
                                         ),
                                       ),
-                                    );
-                                  }).toList(),
-                                ),
-                                // User location marker (UK)
-                                MarkerLayer(
-                                  markers: [
-                                    Marker(
-                                      point: LatLng(51.511911, -0.104472),
-                                      width: 20,
-                                      height: 20,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFF6C7200),
-                                          shape: BoxShape.circle,
-                                          border: Border.all(color: Colors.white, width: 3),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withOpacity(0.3),
-                                              blurRadius: 8,
-                                              offset: const Offset(0, 2),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -1782,52 +1782,64 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                           ),
                           Row(
                             children: [
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _isMapView = false;
-                                  });
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: !_isMapView ? const Color(0xFF6C7200) : Colors.white,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: _isMapView ? Border.all(color: const Color(0xFFE5E7EB)) : null,
-                                  ),
-                                  child: SvgPicture.asset(
-                                    'assets/images/list.svg',
-                                    width: 16,
-                                    height: 16,
-                                    colorFilter: ColorFilter.mode(
-                                      !_isMapView ? Colors.white : const Color(0xFF151712),
-                                      BlendMode.srcIn,
-                                    ),
-                                  ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF3F4F6),
+                                  borderRadius: BorderRadius.circular(999),
+                                  border: Border.all(color: const Color(0xFFE5E7EB)),
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _isMapView = true;
-                                  });
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: _isMapView ? const Color(0xFF6C7200) : Colors.white,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: !_isMapView ? Border.all(color: const Color(0xFFE5E7EB)) : null,
-                                  ),
-                                  child: SvgPicture.asset(
-                                    'assets/images/map-pin.svg',
-                                    width: 16,
-                                    height: 16,
-                                    colorFilter: ColorFilter.mode(
-                                      _isMapView ? Colors.white : const Color(0xFF151712),
-                                      BlendMode.srcIn,
+                                child: SizedBox(
+                                  height: 34,
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _isMapView = false;
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                        decoration: BoxDecoration(
+                                          color: !_isMapView ? const Color(0xFF6C7200) : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(999),
+                                        ),
+                                        child: SvgPicture.asset(
+                                          'assets/images/list.svg',
+                                          width: 16,
+                                          height: 16,
+                                          colorFilter: ColorFilter.mode(
+                                            !_isMapView ? Colors.white : const Color(0xFF6B7280),
+                                            BlendMode.srcIn,
+                                          ),
+                                        ),
+                                      ),
                                     ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _isMapView = true;
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                        decoration: BoxDecoration(
+                                          color: _isMapView ? const Color(0xFF6C7200) : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(999),
+                                        ),
+                                        child: SvgPicture.asset(
+                                          'assets/images/map-pin.svg',
+                                          width: 16,
+                                          height: 16,
+                                          colorFilter: ColorFilter.mode(
+                                            _isMapView ? Colors.white : const Color(0xFF6B7280),
+                                            BlendMode.srcIn,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                   ),
                                 ),
                               ),
@@ -2018,6 +2030,342 @@ double _categoryIconSize(String category) {
   }
 }
 
+class FullscreenMapPage extends StatefulWidget {
+  final List<MerchantData> merchants;
+  final LatLng startingPoint;
+  final int? initialSelectedMerchantId;
+
+  const FullscreenMapPage({
+    super.key,
+    required this.merchants,
+    required this.startingPoint,
+    this.initialSelectedMerchantId,
+  });
+
+  @override
+  State<FullscreenMapPage> createState() => _FullscreenMapPageState();
+}
+
+class _FullscreenMapPageState extends State<FullscreenMapPage> {
+  late int? _selectedMerchantId;
+  late final MapController _mapController;
+  final Distance _distance = const Distance();
+  late final PageController _cardController;
+
+  @override
+  void initState() {
+    super.initState();
+    _mapController = MapController();
+    _selectedMerchantId = widget.initialSelectedMerchantId;
+    final initialIndex = _selectedMerchantId != null
+        ? widget.merchants.indexWhere((m) => m.id == _selectedMerchantId)
+        : 0;
+    _cardController = PageController(
+      viewportFraction: 0.85,
+      initialPage: initialIndex < 0 ? 0 : initialIndex,
+    );
+  }
+
+  @override
+  void dispose() {
+    _cardController.dispose();
+    super.dispose();
+  }
+
+  void _selectMerchant(int merchantId, LatLng location, {bool animatePage = true, bool animateMap = true}) {
+    setState(() {
+      _selectedMerchantId = merchantId;
+    });
+    if (animateMap) {
+      _mapController.move(location, 14.5);
+    }
+    if (animatePage) {
+      final targetIndex = widget.merchants.indexWhere((m) => m.id == merchantId);
+      if (targetIndex >= 0) {
+        _cardController.animateToPage(
+          targetIndex,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOut,
+        );
+      }
+    }
+  }
+
+  void _toggleMerchant(MerchantData merchant) {
+    if (_selectedMerchantId == merchant.id) {
+      setState(() {
+        _selectedMerchantId = null;
+      });
+    } else {
+      _selectMerchant(merchant.id, merchant.location);
+    }
+  }
+
+  String _formatDistance(LatLng target) {
+    final meters = _distance.as(LengthUnit.Meter, widget.startingPoint, target);
+    if (meters >= 1000) {
+      return '${(meters / 1000).toStringAsFixed(1)}km';
+    }
+    return '${meters.round()}m';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final merchants = widget.merchants;
+    final selectedMerchant = _selectedMerchantId != null
+        ? merchants.where((m) => m.id == _selectedMerchantId).toList()
+        : <MerchantData>[];
+    final initialCenter = selectedMerchant.isNotEmpty
+        ? selectedMerchant.first.location
+        : (merchants.isNotEmpty ? merchants.first.location : widget.startingPoint);
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            FlutterMap(
+              mapController: _mapController,
+              options: MapOptions(
+                initialCenter: initialCenter,
+                initialZoom: 15,
+                minZoom: 10,
+                maxZoom: 18,
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  userAgentPackageName: 'com.teya.merchant_rewards',
+                  additionalOptions: const {
+                    'attribution': '© OpenStreetMap contributors',
+                  },
+                ),
+                MarkerLayer(
+                  markers: [
+                    for (final merchant in merchants)
+                      Marker(
+                        point: merchant.location,
+                        width: 38,
+                        height: 48,
+                        child: GestureDetector(
+                          onTap: () => _toggleMerchant(merchant),
+                          child: Image.asset(
+                            _selectedMerchantId == merchant.id ? 'assets/images/selected-pin.png' : 'assets/images/not-selected-pin.png',
+                            width: 38,
+                            height: 48,
+                          ),
+                        ),
+                      ),
+                    Marker(
+                      point: widget.startingPoint,
+                      width: 28,
+                      height: 28,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF8DBF1F),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 3),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Positioned(
+              top: 8,
+              left: 12,
+              right: 12,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    child: Row(
+                      children: const [
+                        Text(
+                          '9:41',
+                          style: TextStyle(
+                            color: Color(0xFF151712),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Spacer(),
+                        Icon(Icons.signal_cellular_4_bar, size: 18, color: Color(0xFF151712)),
+                        SizedBox(width: 6),
+                        Icon(Icons.wifi, size: 18, color: Color(0xFF151712)),
+                        SizedBox(width: 6),
+                        Icon(Icons.battery_full, size: 20, color: Color(0xFF151712)),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () => Navigator.of(context).pop(),
+                          child: const Icon(Icons.arrow_back, color: Color(0xFF151712)),
+                        ),
+                        const Text(
+                          'Places',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF151712),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(width: 24),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (_selectedMerchantId != null && merchants.isNotEmpty)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 20,
+                child: SizedBox(
+                  height: 110,
+                  child: PageView.builder(
+                    controller: _cardController,
+                    onPageChanged: (page) {
+                      if (page >= 0 && page < merchants.length) {
+                        final merchant = merchants[page];
+                        _selectMerchant(merchant.id, merchant.location, animatePage: false);
+                      }
+                    },
+                    itemCount: merchants.length,
+                    itemBuilder: (context, index) {
+                      final merchant = merchants[index];
+                      final category = _getMccCategory(merchant.mcc);
+
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: GestureDetector(
+                          onTap: () => _selectMerchant(merchant.id, merchant.location),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.12),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 6),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFF6F8C7),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Center(
+                                    child: SvgPicture.asset(
+                                      _categoryIconPath(category),
+                                      width: _categoryIconSize(category),
+                                      height: _categoryIconSize(category),
+                                      colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            category,
+                                            style: const TextStyle(
+                                              color: Color(0xFF8F928C),
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          Text(
+                                            _formatDistance(merchant.location),
+                                            style: const TextStyle(
+                                              color: Color(0xFF8F928C),
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      merchant.merchantName,
+                                      style: const TextStyle(
+                                          color: Color(0xFF151712),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '${merchant.streetAddress} ${merchant.city} ${merchant.zipCode}',
+                                        style: const TextStyle(
+                                          color: Color(0xFF8F928C),
+                                          fontSize: 13,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 
 class _CategoryIconFilter extends StatelessWidget {
   final String iconPath;
@@ -2093,7 +2441,7 @@ class _PlaceListItem extends StatelessWidget {
               height: 48,
               decoration: BoxDecoration(
                 color: isSelected ? const Color(0xFF6C7200) : const Color(0xFFF6F8C7),
-                borderRadius: BorderRadius.circular(12),
+                shape: BoxShape.circle,
               ),
               child: Center(
                 child: SvgPicture.asset(
