@@ -651,14 +651,7 @@ class _BalanceCard extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const CashbackMerchantScreen(),
-                ),
-              );
-            },
+            onTap: () => _presentCashbackSheet(context),
             child: const _InsightRow(
               title: 'Cashback',
               subtitle: 'To be paid on 1st October',
@@ -1375,141 +1368,6 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
     return filtered;
   }
 
-  void _showCashbackSheet() {
-    final payments = [
-      _CashbackPayment(
-        label: 'Cashback 🔥',
-        time: '20:11',
-        merchant: 'Grays Inn Barbers',
-        amount: '+£0.20',
-      ),
-      _CashbackPayment(
-        label: 'Cashback 🔥🔥',
-        time: '10:05',
-        merchant: 'Zargos Furniture',
-        amount: '+£1.30',
-      ),
-      _CashbackPayment(
-        label: 'Cashback 🔥🔥🔥',
-        time: '14:30',
-        merchant: 'KST Fashion',
-        amount: '+£0.50',
-      ),
-    ];
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: 16,
-              right: 16,
-              top: 12,
-              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Cashback',
-                      style: TextStyle(
-                        color: Color(0xFF151712),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: SvgPicture.asset(
-                        'assets/images/circle-x.svg',
-                        width: 24,
-                        height: 24,
-                        colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Text(
-                      '£13.21',
-                      style: TextStyle(
-                        color: Color(0xFF151712),
-                        fontSize: 36,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFC8EB6B),
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/images/money-pounds.svg',
-                            width: 14,
-                            height: 14,
-                            colorFilter: const ColorFilter.mode(Color(0xFF6C7200), BlendMode.srcIn),
-                          ),
-                          const SizedBox(width: 6),
-                          const Text(
-                            '1% Cashback boost',
-                            style: TextStyle(
-                              color: Color(0xFF6C7200),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                const Text(
-                  'next payment on 1st March',
-                  style: TextStyle(
-                    color: Color(0xFF8F928C),
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Divider(color: Color(0xFFE5E7EB), height: 1),
-                const SizedBox(height: 14),
-                const Text(
-                  'Last cashback payments',
-                  style: TextStyle(
-                    color: Color(0xFF151712),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                ...payments.map((p) => _CashbackPaymentRow(payment: p)),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     const pageBackground = Color(0xFFF7F8F2);
@@ -1605,7 +1463,7 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                           ),
                           const SizedBox(height: 8),
                           GestureDetector(
-                            onTap: _showCashbackSheet,
+                            onTap: () => _presentCashbackSheet(context),
                             behavior: HitTestBehavior.opaque,
                             child: Column(
                               children: [
@@ -2368,4 +2226,139 @@ class _CashbackPaymentRow extends StatelessWidget {
       ),
     );
   }
+}
+
+void _presentCashbackSheet(BuildContext context) {
+  const payments = [
+    _CashbackPayment(
+      label: 'Cashback 🔥',
+      time: '20:11',
+      merchant: 'Grays Inn Barbers',
+      amount: '+£0.20',
+    ),
+    _CashbackPayment(
+      label: 'Cashback 🔥🔥',
+      time: '10:05',
+      merchant: 'Zargos Furniture',
+      amount: '+£1.30',
+    ),
+    _CashbackPayment(
+      label: 'Cashback 🔥🔥🔥',
+      time: '14:30',
+      merchant: 'KST Fashion',
+      amount: '+£0.50',
+    ),
+  ];
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    builder: (context) {
+      return SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 12,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Cashback',
+                    style: TextStyle(
+                      color: Color(0xFF151712),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: SvgPicture.asset(
+                      'assets/images/circle-x.svg',
+                      width: 24,
+                      height: 24,
+                      colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text(
+                    '£13.21',
+                    style: TextStyle(
+                      color: Color(0xFF151712),
+                      fontSize: 36,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFC8EB6B),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/images/money-pounds.svg',
+                          width: 14,
+                          height: 14,
+                          colorFilter: const ColorFilter.mode(Color(0xFF6C7200), BlendMode.srcIn),
+                        ),
+                        const SizedBox(width: 6),
+                        const Text(
+                          '1% Cashback boost',
+                          style: TextStyle(
+                            color: Color(0xFF6C7200),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                'next payment on 1st March',
+                style: TextStyle(
+                  color: Color(0xFF8F928C),
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Divider(color: Color(0xFFE5E7EB), height: 1),
+              const SizedBox(height: 14),
+              const Text(
+                'Last cashback payments',
+                style: TextStyle(
+                  color: Color(0xFF151712),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 12),
+              ...payments.map((p) => _CashbackPaymentRow(payment: p)),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
