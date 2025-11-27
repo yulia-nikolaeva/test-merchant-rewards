@@ -2602,19 +2602,19 @@ void _presentCashbackSheet(BuildContext context) {
   const payments = [
     _CashbackPayment(
       label: 'Cashback 🔥🔥🔥',
-      time: '09:27',
+      time: '12:27',
       merchant: 'ALL THAT FALAFEL & MORE',
       amount: '+£0.40',
     ),
     _CashbackPayment(
       label: 'Cashback 🔥🔥',
-      time: '08:12',
+      time: '12:10',
       merchant: 'Zargos Furniture',
       amount: '+£1.30',
     ),
     _CashbackPayment(
       label: 'Cashback 🔥',
-      time: '07:54',
+      time: '12:02',
       merchant: 'KST Fashion',
       amount: '+£0.50',
     ),
