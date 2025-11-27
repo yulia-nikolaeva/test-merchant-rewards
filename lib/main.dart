@@ -1991,6 +1991,32 @@ String _getMccCategory(String mcc) {
   }
 }
 
+String _categoryIconPath(String category) {
+  switch (category) {
+    case 'Retail':
+      return 'assets/images/shopping-cart.svg';
+    case 'Cafe':
+      return 'assets/images/coffee-cup.svg';
+    case 'Gifts':
+      return 'assets/images/gift.svg';
+    case 'Services':
+      return 'assets/images/plant.svg';
+    case 'Restaurant':
+      return 'assets/images/utensils.svg';
+    default:
+      return 'assets/images/store.svg';
+  }
+}
+
+double _categoryIconSize(String category) {
+  switch (category) {
+    case 'Gifts':
+      return 26; // slightly larger to match stroke weight visually
+    default:
+      return 24;
+  }
+}
+
 
 class _CategoryIconFilter extends StatelessWidget {
   final String iconPath;
@@ -2052,6 +2078,8 @@ class _PlaceListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final iconSize = _categoryIconSize(category);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -2068,9 +2096,9 @@ class _PlaceListItem extends StatelessWidget {
               ),
               child: Center(
                 child: SvgPicture.asset(
-                  'assets/images/store.svg',
-                  width: 24,
-                  height: 24,
+                  _categoryIconPath(category),
+                  width: iconSize,
+                  height: iconSize,
                   colorFilter: ColorFilter.mode(
                     isSelected ? Colors.white : const Color(0xFF151712),
                     BlendMode.srcIn,
