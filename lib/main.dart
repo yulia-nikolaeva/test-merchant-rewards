@@ -252,67 +252,74 @@ class PhoneFrame extends StatelessWidget {
     const lightestLime = Color(0xFFF1F3B6);  // #F1F3B6
     const lighterLime = Color(0xFFEBEC91);   // #EBEC91
 
-    final qrCard = Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 16,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF7F8F2),
-              borderRadius: BorderRadius.circular(12),
+    final qrCard = ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 400),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
             ),
-            child: QrImageView(
-              data: qrPrototypeUrl,
-              version: QrVersions.auto,
-              size: 120,
-              gapless: true,
-              eyeStyle: QrEyeStyle(
-                eyeShape: QrEyeShape.square,
-                color: const Color(0xFF151712),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF7F8F2),
+                borderRadius: BorderRadius.circular(12),
               ),
-              dataModuleStyle: QrDataModuleStyle(
-                dataModuleShape: QrDataModuleShape.square,
-                color: const Color(0xFF151712),
+              child: QrImageView(
+                data: qrPrototypeUrl,
+                version: QrVersions.auto,
+                size: 126,
+                gapless: true,
+                eyeStyle: QrEyeStyle(
+                  eyeShape: QrEyeShape.square,
+                  color: const Color(0xFF151712),
+                ),
+                dataModuleStyle: QrDataModuleStyle(
+                  dataModuleShape: QrDataModuleShape.square,
+                  color: const Color(0xFF151712),
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  'Open the prototype',
-                  style: TextStyle(
-                    color: Color(0xFF151712),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
+            const SizedBox(width: 14),
+            const Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Open the prototype',
+                      style: TextStyle(
+                        color: Color(0xFF151712),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: 6),
+                    Text(
+                      'Scan to view the web demo on your device.',
+                      style: TextStyle(
+                        color: Color(0xFF666666),
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 6),
-                Text(
-                  'Scan to view the web demo on your device.',
-                  style: TextStyle(
-                    color: Color(0xFF666666),
-                    fontSize: 13,
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
 
@@ -341,8 +348,8 @@ class PhoneFrame extends StatelessWidget {
               }
 
               final isNarrow = constraints.maxWidth < 900;
-              final phoneWidth = math.min(constraints.maxWidth * (isNarrow ? 0.82 : 0.42), 400.0);
-              final phoneHeight = (phoneWidth * 2.2).clamp(680.0, 860.0).toDouble();
+              final phoneWidth = math.min(constraints.maxWidth * (isNarrow ? 0.84 : 0.44), 380.0);
+              final phoneHeight = (phoneWidth * 2.15).clamp(660.0, 860.0).toDouble();
 
               final phoneWidget = Center(
                 child: Container(
@@ -385,10 +392,10 @@ class PhoneFrame extends StatelessWidget {
 
               final textColumn = Padding(
                 padding: EdgeInsets.fromLTRB(
-                  isNarrow ? 24.0 : 40.0,
-                  isNarrow ? 28.0 : 60.0,
-                  isNarrow ? 24.0 : 60.0,
-                  isNarrow ? 36.0 : 60.0,
+                  isNarrow ? 10.0 : 22.0,
+                  isNarrow ? 8.0 : 30.0,
+                  isNarrow ? 10.0 : 30.0,
+                  isNarrow ? 16.0 : 32.0,
                 ),
                 child: Column(
                   mainAxisAlignment: isNarrow ? MainAxisAlignment.start : MainAxisAlignment.center,
