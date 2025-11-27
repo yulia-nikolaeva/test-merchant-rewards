@@ -335,9 +335,14 @@ class PhoneFrame extends StatelessWidget {
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
+              if (constraints.maxWidth < 600) {
+                // On small/mobile screens, render the app directly without a mock device frame.
+                return const BusinessAccountHome();
+              }
+
               final isNarrow = constraints.maxWidth < 900;
-              final phoneWidth = math.min(constraints.maxWidth * (isNarrow ? 0.9 : 0.45), 420.0);
-              final phoneHeight = (phoneWidth * 2.1).clamp(680.0, 844.0).toDouble();
+              final phoneWidth = math.min(constraints.maxWidth * (isNarrow ? 0.82 : 0.42), 400.0);
+              final phoneHeight = (phoneWidth * 2.2).clamp(680.0, 860.0).toDouble();
 
               final phoneWidget = Center(
                 child: Container(
@@ -469,36 +474,7 @@ class BusinessAccountHome extends StatelessWidget {
             ),
             Column(
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        '9:41',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF151712),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          const Icon(Icons.signal_cellular_4_bar, size: 16, color: Color(0xFF151712)),
-                          const SizedBox(width: 4),
-                          SvgPicture.asset(
-                            'assets/images/wifi.svg',
-                            width: 16,
-                            height: 16,
-                            colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
-                          ),
-                          const SizedBox(width: 4),
-                          const Icon(Icons.battery_full, size: 20, color: Color(0xFF151712)),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+                const _StatusBar(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12)),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -575,7 +551,12 @@ class _TopBar extends StatelessWidget {
             color: Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: const Icon(Icons.settings_outlined, color: primaryText, size: 20),
+          child: SvgPicture.asset(
+            'assets/images/gear.svg',
+            width: 15,
+            height: 15,
+            colorFilter: const ColorFilter.mode(primaryText, BlendMode.srcIn),
+          ),
         ),
       ],
     );
@@ -833,32 +814,39 @@ class _BuyLocalSection extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: const Color(0xFFE1E456),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.monetization_on,
-                    size: 14,
-                    color: primaryText,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFFE1E456), // lemonade DS primary
+                      Color(0xFFD6F25A), // brighter lime accent
+                    ],
                   ),
-                  const SizedBox(width: 4),
-                  const Text(
-                    'Earn cashback',
-                    style: TextStyle(
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.monetization_on,
+                      size: 14,
                       color: primaryText,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 4),
+                    const Text(
+                      'Earn cashback',
+                      style: TextStyle(
+                        color: primaryText,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
             const Spacer(),
             GestureDetector(
               onTap: () {
@@ -1023,9 +1011,9 @@ class _ActivitySection extends StatelessWidget {
         const SizedBox(height: 14),
         Row(
           children: const [
-            _SegmentedControlChip(label: 'List', selected: true),
+            _SegmentedControlChip(label: 'List', iconPath: 'assets/images/list.svg', selected: true),
             SizedBox(width: 8),
-            _SegmentedControlChip(label: 'Group', selected: false),
+            _SegmentedControlChip(label: 'Group', iconPath: 'assets/images/stack-three.svg', selected: false),
           ],
         ),
         const SizedBox(height: 14),
@@ -1064,10 +1052,12 @@ class _ActivitySection extends StatelessWidget {
 class _SegmentedControlChip extends StatelessWidget {
   final String label;
   final bool selected;
+  final String iconPath;
 
   const _SegmentedControlChip({
     required this.label,
     required this.selected,
+    required this.iconPath,
   });
 
   @override
@@ -1083,13 +1073,74 @@ class _SegmentedControlChip extends StatelessWidget {
         color: selected ? selectedBg : unselectedBg,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: selected ? selectedText : unselectedText,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            iconPath,
+            width: 16,
+            height: 16,
+            colorFilter: ColorFilter.mode(selected ? selectedText : unselectedText, BlendMode.srcIn),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              color: selected ? selectedText : unselectedText,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusBar extends StatelessWidget {
+  final EdgeInsetsGeometry padding;
+
+  const _StatusBar({this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 8)});
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (width < 600) return const SizedBox.shrink();
+
+    return Padding(
+      padding: padding,
+      child: Row(
+        children: [
+          const Text(
+            '9:41',
+            style: TextStyle(
+              color: Color(0xFF151712),
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const Spacer(),
+          SvgPicture.asset(
+            'assets/images/cellular.svg',
+            width: 14,
+            height: 14,
+            colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
+          ),
+          const SizedBox(width: 6),
+          SvgPicture.asset(
+            'assets/images/wifi.svg',
+            width: 14,
+            height: 14,
+            colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
+          ),
+          const SizedBox(width: 8),
+          SvgPicture.asset(
+            'assets/images/battery.svg',
+            width: 16,
+            height: 16,
+            colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
+          ),
+        ],
       ),
     );
   }
@@ -1262,8 +1313,15 @@ class _BottomNavItem extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: highlight,
                     borderRadius: BorderRadius.circular(10),
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFFE1E456),
+                        Color(0xFFD6F25A),
+                      ],
+                    ),
                   ),
                   child: const Text(
                     'New',
@@ -1276,12 +1334,12 @@ class _BottomNavItem extends StatelessWidget {
                 ),
               ),
             if (showDot)
-              const Positioned(
+              Positioned(
                 top: -2,
                 right: -2,
                 child: CircleAvatar(
                   radius: 4,
-                  backgroundColor: highlight,
+                  backgroundColor: const Color(0xFFE1E456),
                 ),
               ),
           ],
@@ -1399,38 +1457,7 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Status bar
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              color: Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    '9:41',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF151712),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      const Icon(Icons.signal_cellular_4_bar, size: 16, color: Color(0xFF151712)),
-                      const SizedBox(width: 4),
-                      SvgPicture.asset(
-                        'assets/images/wifi.svg',
-                        width: 16,
-                        height: 16,
-                        colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
-                      ),
-                      const SizedBox(width: 4),
-                      const Icon(Icons.battery_full, size: 20, color: Color(0xFF151712)),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            const _StatusBar(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12)),
             // Header with back button
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -2183,64 +2210,49 @@ class _FullscreenMapPageState extends State<FullscreenMapPage> {
               top: 8,
               left: 12,
               right: 12,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 2),
-                    child: Row(
-                      children: const [
-                        Text(
-                          '9:41',
-                          style: TextStyle(
-                            color: Color(0xFF151712),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
+              child: Builder(
+                builder: (context) {
+                  final showStatusRow = MediaQuery.of(context).size.width >= 600;
+                  return Column(
+                    children: [
+                      const _StatusBar(padding: EdgeInsets.symmetric(horizontal: 2, vertical: 4)),
+                      if (showStatusRow) const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                        Spacer(),
-                        Icon(Icons.signal_cellular_4_bar, size: 18, color: Color(0xFF151712)),
-                        SizedBox(width: 6),
-                        Icon(Icons.wifi, size: 18, color: Color(0xFF151712)),
-                        SizedBox(width: 6),
-                        Icon(Icons.battery_full, size: 20, color: Color(0xFF151712)),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () => Navigator.of(context).pop(),
+                              child: const Icon(Icons.arrow_back, color: Color(0xFF151712)),
+                            ),
+                            const Text(
+                              'Places',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF151712),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(width: 24),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                          onTap: () => Navigator.of(context).pop(),
-                          child: const Icon(Icons.arrow_back, color: Color(0xFF151712)),
-                        ),
-                        const Text(
-                          'Places',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF151712),
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(width: 24),
-                      ],
-                    ),
-                  ),
-                ],
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
             if (_selectedMerchantId != null && merchants.isNotEmpty)
@@ -2632,7 +2644,7 @@ void _presentCashbackSheet(BuildContext context) {
                   GestureDetector(
                     onTap: () => Navigator.of(context).pop(),
                     child: SvgPicture.asset(
-                      'assets/images/circle-x.svg',
+                      'assets/images/plain-x.svg',
                       width: 24,
                       height: 24,
                       colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
@@ -2656,8 +2668,15 @@ void _presentCashbackSheet(BuildContext context) {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFC8EB6B),
                       borderRadius: BorderRadius.circular(999),
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color(0xFFE1E456), // lemonade DS primary
+                          Color(0xFFD6F25A), // brighter lime accent
+                        ],
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -2666,13 +2685,13 @@ void _presentCashbackSheet(BuildContext context) {
                           'assets/images/money-pounds.svg',
                           width: 14,
                           height: 14,
-                          colorFilter: const ColorFilter.mode(Color(0xFF6C7200), BlendMode.srcIn),
+                          colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
                         ),
                         const SizedBox(width: 6),
                         const Text(
                           '1% Cashback boost',
                           style: TextStyle(
-                            color: Color(0xFF6C7200),
+                            color: Color(0xFF151712),
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
                           ),
