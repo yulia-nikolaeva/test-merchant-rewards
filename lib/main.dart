@@ -1,7 +1,12 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+
+const qrPrototypeUrl = 'https://curly-tribble-r63qg21.pages.github.io';
 
 void main() {
   runApp(const MyApp());
@@ -314,6 +319,70 @@ class PhoneFrame extends StatelessWidget {
     const lightestLime = Color(0xFFF1F3B6);  // #F1F3B6
     const lighterLime = Color(0xFFEBEC91);   // #EBEC91
 
+    final qrCard = Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF7F8F2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: QrImageView(
+              data: qrPrototypeUrl,
+              version: QrVersions.auto,
+              size: 120,
+              gapless: true,
+              eyeStyle: QrEyeStyle(
+                eyeShape: QrEyeShape.square,
+                color: const Color(0xFF151712),
+              ),
+              dataModuleStyle: QrDataModuleStyle(
+                dataModuleShape: QrDataModuleShape.square,
+                color: const Color(0xFF151712),
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  'Open the prototype',
+                  style: TextStyle(
+                    color: Color(0xFF151712),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: 6),
+                Text(
+                  'Scan to view the web demo on your device.',
+                  style: TextStyle(
+                    color: Color(0xFF666666),
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -330,15 +399,17 @@ class PhoneFrame extends StatelessWidget {
             stops: [0.0, 0.25, 0.5, 0.75, 1.0],
           ),
         ),
-        child: Row(
-          children: [
-            // Left side - Phone prototype
-            Expanded(
-              flex: 1,
-              child: Center(
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 900;
+              final phoneWidth = math.min(constraints.maxWidth * (isNarrow ? 0.9 : 0.45), 420.0);
+              final phoneHeight = (phoneWidth * 2.1).clamp(680.0, 844.0).toDouble();
+
+              final phoneWidget = Center(
                 child: Container(
-                  width: 400,
-                  height: 844,
+                  width: phoneWidth,
+                  height: phoneHeight,
                   decoration: BoxDecoration(
                     color: Colors.black,
                     borderRadius: BorderRadius.circular(40),
@@ -372,45 +443,70 @@ class PhoneFrame extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
-            ),
-            // Right side - Branded text
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(40.0, 60.0, 60.0, 60.0),
+              );
+
+              final textColumn = Padding(
+                padding: EdgeInsets.fromLTRB(
+                  isNarrow ? 24.0 : 40.0,
+                  isNarrow ? 28.0 : 60.0,
+                  isNarrow ? 24.0 : 60.0,
+                  isNarrow ? 36.0 : 60.0,
+                ),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: isNarrow ? MainAxisAlignment.start : MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
                       'Buy local.\nGrow together.',
                       style: TextStyle(
                         fontFamily: 'Figtree',
-                        fontSize: 72,
+                        fontSize: isNarrow ? 42 : 72,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         height: 1.1,
-                        letterSpacing: -2,
+                        letterSpacing: isNarrow ? -1.2 : -2,
                       ),
                     ),
-                    SizedBox(height: 24),
+                    const SizedBox(height: 16),
                     Text(
                       'When Teya merchants buy from other\nTeya merchants, everyone wins with\nincreased cashback.',
                       style: TextStyle(
                         fontFamily: 'Figtree',
-                        fontSize: 20,
+                        fontSize: isNarrow ? 16 : 20,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF666666),
+                        color: const Color(0xFF666666),
                         height: 1.5,
-                        letterSpacing: -0.3,
+                        letterSpacing: isNarrow ? -0.2 : -0.3,
                       ),
                     ),
+                    const SizedBox(height: 24),
+                    qrCard,
                   ],
                 ),
-              ),
-            ),
-          ],
+              );
+
+              if (isNarrow) {
+                return SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 24),
+                      phoneWidget,
+                      const SizedBox(height: 28),
+                      textColumn,
+                    ],
+                  ),
+                );
+              }
+
+              return Row(
+                children: [
+                  Expanded(flex: 1, child: phoneWidget),
+                  Expanded(flex: 1, child: textColumn),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -1353,6 +1449,8 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
   @override
   Widget build(BuildContext context) {
     const pageBackground = Color(0xFFF7F8F2);
+    const totalStreakDays = 5;
+    const completedStreakDays = 3;
 
     return Scaffold(
       backgroundColor: pageBackground,
@@ -1455,7 +1553,7 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFFFF8F0),
+                              color: const Color(0xFFF6F6F6),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Column(
@@ -1498,12 +1596,12 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    for (var index = 0; index < 5; index++) ...[
+                                    for (var index = 0; index < totalStreakDays; index++) ...[
                                       Container(
                                         width: 40,
                                         height: 40,
                                         decoration: BoxDecoration(
-                                          color: index < 3 ? const Color(0xFFF97316) : const Color(0xFFD1D5DB),
+                                          color: index < completedStreakDays ? const Color(0xFFF97316) : const Color(0xFFD1D5DB),
                                           shape: BoxShape.circle,
                                         ),
                                         child: Center(
@@ -1512,17 +1610,17 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                                             width: 16,
                                             height: 16,
                                             colorFilter: ColorFilter.mode(
-                                              index < 3 ? Colors.white : const Color(0xFF6B7280),
+                                              index < completedStreakDays ? Colors.white : const Color(0xFF6B7280),
                                               BlendMode.srcIn,
                                             ),
                                           ),
                                         ),
                                       ),
-                                      if (index < 4)
+                                      if (index < totalStreakDays - 1)
                                         Expanded(
                                           child: Container(
                                             height: 3,
-                                            color: index < 2 ? const Color(0xFFF97316) : const Color(0xFFD1D5DB),
+                                            color: (index + 1) < completedStreakDays ? const Color(0xFFF97316) : const Color(0xFFD1D5DB),
                                           ),
                                         ),
                                     ],
@@ -1626,6 +1724,7 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                         ],
                       ),
                     ),
+                    const SizedBox(height: 16),
                     // Map view (only shown when map view is selected)
                     if (_isMapView) ...[
                       const SizedBox(height: 16),
