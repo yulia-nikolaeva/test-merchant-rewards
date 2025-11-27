@@ -1462,9 +1462,10 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    const Text(
-                                      '🔥',
-                                      style: TextStyle(fontSize: 24),
+                                    Image.asset(
+                                      'assets/images/fire.png',
+                                      width: 24,
+                                      height: 24,
                                     ),
                                     const SizedBox(width: 12),
                                     const Expanded(
@@ -1495,43 +1496,37 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                                 const SizedBox(height: 16),
                                 // Progress dots
                                 Row(
-                                  children: List.generate(5, (index) {
-                                    final isCompleted = index < 3;
-                                    return Expanded(
-                                      child: Row(
-                                        children: [
-                                          if (index > 0)
-                                            Expanded(
-                                              child: Container(
-                                                height: 3,
-                                                color: isCompleted ? const Color(0xFFF97316) : const Color(0xFFD1D5DB),
-                                              ),
-                                            ),
-                                          Container(
-                                            width: 40,
-                                            height: 40,
-                                            decoration: BoxDecoration(
-                                              color: isCompleted ? const Color(0xFFF97316) : const Color(0xFFD1D5DB),
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: const Center(
-                                              child: Text(
-                                                '🔥',
-                                                style: TextStyle(fontSize: 16),
-                                              ),
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    for (var index = 0; index < 5; index++) ...[
+                                      Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          color: index < 3 ? const Color(0xFFF97316) : const Color(0xFFD1D5DB),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: SvgPicture.asset(
+                                            'assets/images/fire_icon.svg',
+                                            width: 16,
+                                            height: 16,
+                                            colorFilter: ColorFilter.mode(
+                                              index < 3 ? Colors.white : const Color(0xFF6B7280),
+                                              BlendMode.srcIn,
                                             ),
                                           ),
-                                          if (index < 4)
-                                            Expanded(
-                                              child: Container(
-                                                height: 3,
-                                                color: isCompleted ? const Color(0xFFF97316) : const Color(0xFFD1D5DB),
-                                              ),
-                                            ),
-                                        ],
+                                        ),
                                       ),
-                                    );
-                                  }),
+                                      if (index < 4)
+                                        Expanded(
+                                          child: Container(
+                                            height: 3,
+                                            color: index < 2 ? const Color(0xFFF97316) : const Color(0xFFD1D5DB),
+                                          ),
+                                        ),
+                                    ],
+                                  ],
                                 ),
                               ],
                             ),
@@ -2094,5 +2089,3 @@ class _PlaceListItem extends StatelessWidget {
     );
   }
 }
-
-
