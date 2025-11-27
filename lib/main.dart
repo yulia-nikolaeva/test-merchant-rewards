@@ -553,8 +553,8 @@ class _TopBar extends StatelessWidget {
           ),
           child: SvgPicture.asset(
             'assets/images/gear.svg',
-            width: 15,
-            height: 15,
+            width: 11,
+            height: 11,
             colorFilter: const ColorFilter.mode(primaryText, BlendMode.srcIn),
           ),
         ),
@@ -1512,7 +1512,7 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 4),
                           GestureDetector(
                             onTap: () => _presentCashbackSheet(context),
                             behavior: HitTestBehavior.opaque,
@@ -1540,8 +1540,8 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                                         children: [
                                           Image.asset(
                                             'assets/images/fire.png',
-                                            width: 24,
-                                            height: 24,
+                                            width: 32,
+                                            height: 32,
                                           ),
                                           const SizedBox(width: 12),
                                           const Expanded(
