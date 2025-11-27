@@ -1375,6 +1375,141 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
     return filtered;
   }
 
+  void _showCashbackSheet() {
+    final payments = [
+      _CashbackPayment(
+        label: 'Cashback 🔥',
+        time: '20:11',
+        merchant: 'Grays Inn Barbers',
+        amount: '+£0.20',
+      ),
+      _CashbackPayment(
+        label: 'Cashback 🔥🔥',
+        time: '10:05',
+        merchant: 'Zargos Furniture',
+        amount: '+£1.30',
+      ),
+      _CashbackPayment(
+        label: 'Cashback 🔥🔥🔥',
+        time: '14:30',
+        merchant: 'KST Fashion',
+        amount: '+£0.50',
+      ),
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 12,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Cashback',
+                      style: TextStyle(
+                        color: Color(0xFF151712),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: SvgPicture.asset(
+                        'assets/images/circle-x.svg',
+                        width: 24,
+                        height: 24,
+                        colorFilter: const ColorFilter.mode(Color(0xFF151712), BlendMode.srcIn),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text(
+                      '£13.21',
+                      style: TextStyle(
+                        color: Color(0xFF151712),
+                        fontSize: 36,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFC8EB6B),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/images/money-pounds.svg',
+                            width: 14,
+                            height: 14,
+                            colorFilter: const ColorFilter.mode(Color(0xFF6C7200), BlendMode.srcIn),
+                          ),
+                          const SizedBox(width: 6),
+                          const Text(
+                            '1% Cashback boost',
+                            style: TextStyle(
+                              color: Color(0xFF6C7200),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'next payment on 1st March',
+                  style: TextStyle(
+                    color: Color(0xFF8F928C),
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Divider(color: Color(0xFFE5E7EB), height: 1),
+                const SizedBox(height: 14),
+                const Text(
+                  'Last cashback payments',
+                  style: TextStyle(
+                    color: Color(0xFF151712),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ...payments.map((p) => _CashbackPaymentRow(payment: p)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     const pageBackground = Color(0xFFF7F8F2);
@@ -1469,91 +1604,99 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            '£13.21',
-                            style: TextStyle(
-                              color: Color(0xFF151712),
-                              fontSize: 40,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          // Streak section
-                          Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF6F6F6),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
+                          GestureDetector(
+                            onTap: _showCashbackSheet,
+                            behavior: HitTestBehavior.opaque,
                             child: Column(
                               children: [
-                                Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/fire.png',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 12),
-                                    const Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                const Text(
+                                  '£13.21',
+                                  style: TextStyle(
+                                    color: Color(0xFF151712),
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
+                                // Streak section
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFF6F6F6),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Row(
                                         children: [
-                                          Text(
-                                            '3 days streak!',
-                                            style: TextStyle(
-                                              color: Color(0xFF151712),
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w600,
-                                            ),
+                                          Image.asset(
+                                            'assets/images/fire.png',
+                                            width: 24,
+                                            height: 24,
                                           ),
-                                          SizedBox(height: 2),
-                                          Text(
-                                            'You have unlocked a cashback boost',
-                                            style: TextStyle(
-                                              color: Color(0xFF8F928C),
-                                              fontSize: 13,
+                                          const SizedBox(width: 12),
+                                          const Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  '3 days streak!',
+                                                  style: TextStyle(
+                                                    color: Color(0xFF151712),
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 2),
+                                                Text(
+                                                  'You have unlocked a cashback boost',
+                                                  style: TextStyle(
+                                                    color: Color(0xFF8F928C),
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                // Progress dots
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    for (var index = 0; index < totalStreakDays; index++) ...[
-                                      Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: BoxDecoration(
-                                          color: index < completedStreakDays ? const Color(0xFFF97316) : const Color(0xFFD1D5DB),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Center(
-                                          child: SvgPicture.asset(
-                                            'assets/images/fire_icon.svg',
-                                            width: 16,
-                                            height: 16,
-                                            colorFilter: ColorFilter.mode(
-                                              index < completedStreakDays ? Colors.white : const Color(0xFF6B7280),
-                                              BlendMode.srcIn,
+                                      const SizedBox(height: 16),
+                                      // Progress dots
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          for (var index = 0; index < totalStreakDays; index++) ...[
+                                            Container(
+                                              width: 40,
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                color: index < completedStreakDays ? const Color(0xFFF97316) : const Color(0xFFD1D5DB),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Center(
+                                                child: SvgPicture.asset(
+                                                  'assets/images/fire_icon.svg',
+                                                  width: 16,
+                                                  height: 16,
+                                                  colorFilter: ColorFilter.mode(
+                                                    index < completedStreakDays ? Colors.white : const Color(0xFF6B7280),
+                                                    BlendMode.srcIn,
+                                                  ),
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ),
+                                            if (index < totalStreakDays - 1)
+                                              Expanded(
+                                                child: Container(
+                                                  height: 3,
+                                                  color: (index + 1) < completedStreakDays ? const Color(0xFFF97316) : const Color(0xFFD1D5DB),
+                                                ),
+                                              ),
+                                          ],
+                                        ],
                                       ),
-                                      if (index < totalStreakDays - 1)
-                                        Expanded(
-                                          child: Container(
-                                            height: 3,
-                                            color: (index + 1) < completedStreakDays ? const Color(0xFFF97316) : const Color(0xFFD1D5DB),
-                                          ),
-                                        ),
                                     ],
-                                  ],
+                                  ),
                                 ),
                               ],
                             ),
@@ -2141,6 +2284,87 @@ class _PlaceListItem extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _CashbackPayment {
+  final String label;
+  final String time;
+  final String merchant;
+  final String amount;
+
+  const _CashbackPayment({
+    required this.label,
+    required this.time,
+    required this.merchant,
+    required this.amount,
+  });
+}
+
+class _CashbackPaymentRow extends StatelessWidget {
+  final _CashbackPayment payment;
+
+  const _CashbackPaymentRow({required this.payment});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1F3F4),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: SvgPicture.asset(
+                'assets/images/money-pounds.svg',
+                width: 16,
+                height: 16,
+                colorFilter: const ColorFilter.mode(Color(0xFF6B7280), BlendMode.srcIn),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  payment.label,
+                  style: const TextStyle(
+                    color: Color(0xFF151712),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${payment.time} • ${payment.merchant}',
+                  style: const TextStyle(
+                    color: Color(0xFF6B7280),
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            payment.amount,
+            style: const TextStyle(
+              color: Color(0xFF6B7280),
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }

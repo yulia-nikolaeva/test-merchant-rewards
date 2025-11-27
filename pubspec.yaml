@@ -54,6 +54,8 @@ flutter:
     - assets/images/store.svg
     - assets/images/wallet.svg
     - assets/images/wifi.svg
+    - assets/images/circle-x.svg
+    - assets/images/qr-code.svg
 
   # Fonts from Teya Lemonade DS
   fonts:
