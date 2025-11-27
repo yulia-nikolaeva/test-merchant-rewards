@@ -6,7 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-const qrPrototypeUrl = 'https://curly-tribble-r63qg21.pages.github.io';
+const qrPrototypeUrl = 'https://yulia-nikolaeva.github.io/test-merchant-rewards/';
 
 void main() {
   runApp(const MyApp());
