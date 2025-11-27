@@ -43,9 +43,8 @@ flutter run -d chrome
 ### Auto-deploy:
 Every push to `main` branch automatically builds and deploys your app.
 
-Your app will be live at: `https://[your-username].github.io/[repo-name]/`
+Your app will be live at: `https://curly-tribble-r63qg21.pages.github.io`
 
 ---
 
 Built for Teya Innovation Days 2025 🌱
-
