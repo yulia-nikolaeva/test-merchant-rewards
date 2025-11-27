@@ -376,6 +376,14 @@ class PhoneFrame extends StatelessWidget {
                     fontSize: 13,
                   ),
                 ),
+                SizedBox(height: 6),
+                Text(
+                  'Requires access to the SaltPay GitHub organization.',
+                  style: TextStyle(
+                    color: Color(0xFF8F928C),
+                    fontSize: 12,
+                  ),
+                ),
               ],
             ),
           ),
