@@ -1457,11 +1457,14 @@ class _CashbackMerchantScreenState extends State<CashbackMerchantScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const _StatusBar(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12)),
+            Container(
+              color: pageBackground,
+              child: const _StatusBar(padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12)),
+            ),
             // Header with back button
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              color: Colors.white,
+              color: pageBackground,
               child: Row(
                 children: [
                   GestureDetector(
